@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "debug": "^4.3.3",
+    "ipfs-car": "^0.6.2",
     "is-ipfs": "^6.0.2"
   }
 }

@@ -1,6 +1,7 @@
 // Mock gateway that returns CAR files
 
 const http = require('http')
+const path = require('path')
 
 const express = require('express')
 const cors = require('cors')
@@ -10,9 +11,19 @@ const app = express()
 
 app.use(cors({ maxAge: 7200 }))
 
-app.get('/:cid', (req, res) => {
+app.get('/:cid', (req, res, next) => {
     const { cid } = req.params
-    //res.send(cid)
+    const opts = {
+        root: path.resolve(__dirname, 'test-files')
+    }
+    const filename = `${cid}.car`
+    res.sendFile(filename, opts, err => {
+        if (err) {
+            next(err)
+        } else {
+            console.log('Sent:', filename)
+        }
+    })
 })
 
 const port = process.env.PORT || 8031
