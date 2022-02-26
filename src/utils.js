@@ -25,3 +25,12 @@ export async function wfetch (resource, opts = {}) {
 export function sleep (ms, value = undefined) {
     return new Promise(resolve => setTimeout(() => resolve(value), ms))
 }
+
+export class Deferred {
+    constructor () {
+        this.promise = new Promise((resolve, reject) => {
+            this.reject = reject
+            this.resolve = resolve
+        })
+    }
+}
