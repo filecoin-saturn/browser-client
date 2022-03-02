@@ -71,7 +71,7 @@ function checkURLFlagsOnNavigation (url) {
     }
 }
 
-// Modified from https://github.com/PinataCloud/ipfs-gateway-tools
+// Modified from https://github.com/PinataCloud/ipfs-gateway-tools/blob/34533f3d5f3c0dd616327e2e5443072c27ea569d/src/index.js#L6
 function findCID (url) {
     const splitUrl = url.split('/')
     for (const split of splitUrl) {

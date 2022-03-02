@@ -19,17 +19,24 @@ module.exports = (env, { mode }) => {
     const GATEWAY_ORIGIN = IS_PROD ? '?' : 'http://localhost:8031'
 
     return {
+        // Uncomment snapshot for webpack to detect edits in node_modules/
+        snapshot: {
+            managedPaths: [],
+        },
         entry: {
             widget: abspath('src/widget/widget.js'),
             sw: abspath('src/sw/sw.js'),
             'sw-core': abspath('src/sw/sw-core.js'),
         },
         devServer: {
-            static: abspath('dist'),
-            port: 8030,
             client: {
                 logging: 'warn'
-            }
+            },
+            static: abspath('dist'),
+            port: 8030,
+            // hot: false,
+            // liveReload: false,
+            webSocketServer: false
         },
         output: {
             path: abspath('dist'),
@@ -47,7 +54,8 @@ module.exports = (env, { mode }) => {
                 emitWarning: false,
             }),
             new HtmlWebpackPlugin({
-                template: abspath('placeholders/index.html')
+                template: abspath('placeholders/index.html'),
+                chunks: ['widget']
             })
         ],
         resolve: {

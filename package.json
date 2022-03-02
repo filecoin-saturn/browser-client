@@ -24,6 +24,8 @@
     "webpack-dev-server": "^4.7.4"
   },
   "dependencies": {
+    "@ipld/car": "^3.2.3",
+    "browser-readablestream-to-it": "^1.0.3",
     "debug": "^4.3.3",
     "ipfs-car": "^0.6.2",
     "is-ipfs": "^6.0.2"
