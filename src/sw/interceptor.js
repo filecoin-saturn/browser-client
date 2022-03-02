@@ -1,9 +1,7 @@
 import { CarBlockIterator } from '@ipld/car/iterator'
 import toIterable from 'browser-readablestream-to-it'
 import createDebug from 'debug'
-import { unpackStream } from 'ipfs-car/unpack'
 import { recursive as unixFsExporter } from 'ipfs-unixfs-exporter'
-import { IdbBlockStore } from 'ipfs-car/blockstore/idb'
 import { IdbAsyncBlockStore } from './idb-async-blockstore'
 
 import { wfetch, sleep } from '@/utils'
@@ -68,74 +66,37 @@ export class Interceptor {
         return new Response(readableStream, this.responseOptions)
     }
 
-    // There will only be one file in the CAR
-    // https://ipld.io/specs/transport/car/carv1/#number-of-roots
-    // "Current usage of the CAR format in Filecoin requires exactly one CID"
-    //
-    // Block <-> CID verification is done by ipfs-car
-    // https://github.com/web3-storage/ipfs-car/blob/9cd28ad5f6f320f2e1e15635e479a8c9beb7d916/src/unpack/utils/verifying-get-only-blockstore.ts#L25
-    // TODO: Handle verification errors?
-    //
-    // TODO: Is there any difference between generic CAR files and Filecoin CAR files?
-    async streamResponse2 (response, controller) {
-        const blockstore = new IdbBlockStore()
-        for await (const file of unpackStream(response.body, { blockstore })) {
-            // Skip root dir
-            if (file.type === 'directory') { continue }
-
-            // TODO: I guess here is where you slice the file to satisfy
-            // range requests?
-            const opts = {}
-            for await (const chunk of file.content(opts)) {
-                controller.enqueue(chunk)
-            }
-        }
-        controller.close()
-        // TODO: Only clears store, doesn't delete database. Databases will
-        // accumulate over time.
-        blockstore.close()
-    }
-
     async streamResponse (response, controller) {
         const blockstore = new IdbAsyncBlockStore()
         for await (const file of this.unpackStream(response.body, { blockstore })) {
             // Skip root dir
             if (file.type === 'directory') { continue }
 
-            // TODO: I guess here is where you slice the file to satisfy
-            // range requests?
             const opts = {}
             for await (const chunk of file.content(opts)) {
                 controller.enqueue(chunk)
             }
         }
         controller.close()
-        // TODO: Only clears store, doesn't delete database. Databases will
-        // accumulate over time.
         blockstore.close()
     }
 
     // Modified from https://github.com/web3-storage/ipfs-car/blob/9cd28ad5f6f320f2e1e15635e479a8c9beb7d916/src/unpack/index.ts#L26
-    async * unpackStream (readable, { roots, blockstore }) {
-        const carIterator = await CarBlockIterator.fromIterable(asAsyncIterable(readable))
+    async * unpackStream (readable, { blockstore }) {
+        const carItr = await CarBlockIterator.fromIterable(asAsyncIterable(readable))
 
         ;(async () => {
-            // TODO: Problem: order seems to be content blocks -> file block, root block
-            // but I need root block -> file block -> content blocks
-            // in order to incrementally decode & render
-            for await (const block of carIterator) {
+            for await (const block of carItr) {
                 await blockstore.put(block.cid, block.bytes)
             }
         })()
 
+        // TODO: Verification not needed for v0.
         //const verifyingBlockStore = VerifyingGetOnlyBlockStore.fromBlockstore(blockstore)
 
-        if (!roots || roots.length === 0 ) {
-          roots = await carIterator.getRoots()
-        }
-
+        const roots = await carItr.getRoots()
         for (const root of roots) {
-          yield* unixFsExporter(root, blockstore)
+            yield * unixFsExporter(root, blockstore)
         }
     }
 
