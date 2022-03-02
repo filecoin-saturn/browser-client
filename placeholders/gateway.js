@@ -11,7 +11,7 @@ const app = express()
 
 app.use(cors({ maxAge: 7200 }))
 
-app.get('/:cid', (req, res, next) => {
+app.get('/cid/:cid', (req, res, next) => {
     const { cid } = req.params
     const opts = {
         root: path.resolve(__dirname, 'test-files')

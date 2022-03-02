@@ -35,7 +35,7 @@ export class Interceptor {
 
     get gatewayUrl () {
         const origin = process.env.GATEWAY_ORIGIN
-        return `${origin}/${this.cid}`
+        return `${origin}/cid/${this.cid}`
     }
 
     // TODO: How to handle response headers?
