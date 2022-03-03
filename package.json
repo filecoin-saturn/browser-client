@@ -28,6 +28,7 @@
     "browser-readablestream-to-it": "^1.0.3",
     "debug": "^4.3.3",
     "ipfs-car": "^0.6.2",
+    "ipfs-unixfs-exporter": "^7.0.6",
     "is-ipfs": "^6.0.2"
   }
 }
