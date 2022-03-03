@@ -3,7 +3,7 @@
 import * as idb from 'idb-keyval'
 import { CID } from 'multiformats'
 import { BaseBlockstore } from 'blockstore-core'
-import { Deferred } from '@/utils'
+import { Deferred, promiseTimeout } from '@/utils'
 
 /**
  * Save blocks to IndexedDB in the browser via idb-keyval
@@ -14,12 +14,13 @@ import { Deferred } from '@/utils'
 // TODO: Feels inefficient to create/delete a database on every intercepted
 // request? Just use 1 database with 1 store per request?
 export class IdbAsyncBlockStore extends BaseBlockstore {
-    constructor () {
+    constructor ({ timeout = 10_000 } = {}) {
         super()
 
         this.dbName = `IdbBlockStore-${Date.now()}-${Math.random()}`
         this.store = idb.createStore(this.dbName, 'IdbBlockStore')
         this.deferredBlocks = {}
+        this.timeout = timeout
     }
 
     async * blocks () {
@@ -50,10 +51,13 @@ export class IdbAsyncBlockStore extends BaseBlockstore {
         if (!bytes) {
             const deferredBlock = new Deferred()
             this.deferredBlocks[cidStr] = deferredBlock
-            bytes = await deferredBlock.promise
+            bytes = await promiseTimeout(
+                deferredBlock.promise,
+                this.timeout
+            ).catch(() => null)
         }
         if (!bytes) {
-            throw new Error(`block with cid ${cid.toString()} no found`)
+            throw new Error(`block with cid ${cid.toString()} not found`)
         }
 
         return bytes
