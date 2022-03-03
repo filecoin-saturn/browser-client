@@ -31,6 +31,7 @@ export class Interceptor {
     constructor (cid, event) {
         this.cid = cid
         this.event = event
+        this.numBytesEnqueued = 0
     }
 
     get gatewayUrl () {
@@ -75,6 +76,7 @@ export class Interceptor {
             const opts = {}
             for await (const chunk of file.content(opts)) {
                 controller.enqueue(chunk)
+                this.numBytesEnqueued += chunk.length
             }
         }
         controller.close()
