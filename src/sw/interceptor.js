@@ -5,6 +5,7 @@ import { recursive as unixFsExporter } from 'ipfs-unixfs-exporter'
 import { IdbAsyncBlockStore } from './idb-async-blockstore'
 
 import { wfetch, sleep } from '@/utils'
+import { verifyBlock } from './verify'
 
 const debug = createDebug('sw')
 const cl = console.log
@@ -88,8 +89,9 @@ export class Interceptor {
         const carItr = await CarBlockIterator.fromIterable(asAsyncIterable(readable))
 
         ;(async () => {
-            for await (const block of carItr) {
-                await blockstore.put(block.cid, block.bytes)
+            for await (const { cid, bytes } of carItr) {
+                await verifyBlock(cid, bytes)
+                await blockstore.put(cid, bytes)
             }
         })()
 
