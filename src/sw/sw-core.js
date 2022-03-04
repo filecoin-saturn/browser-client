@@ -31,18 +31,22 @@ addEventListener('fetch', event => {
 function meetsInterceptionPreconditions (event) {
     try {
         const { request } = event
-        const { url } = request
-        const isNavigation = request.mode === 'navigate'
+        const { url, destination, mode } = request
+        const isNavigation = mode === 'navigate'
 
         if (isNavigation) {
             checkURLFlagsOnNavigation(url)
             return false
         }
 
+        if (['video', 'audio'].includes(destination)) {
+            return false
+        }
+
         // https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
         // "If a request is made to another origin with this mode set, the
         // result is simply an error."
-        const isRequestModeSameOrigin = request.mode === 'same-origin'
+        const isRequestModeSameOrigin = mode === 'same-origin'
 
         const interceptionPreconditionsMet = (
             self.ReadableStream
