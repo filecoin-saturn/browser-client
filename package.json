@@ -35,6 +35,7 @@
     "ipfs-car": "^0.6.2",
     "ipfs-unixfs-exporter": "^7.0.6",
     "is-ipfs": "^6.0.2",
-    "multiformats": "^9.6.4"
+    "multiformats": "^9.6.4",
+    "uuid": "^8.3.2"
   }
 }
