@@ -10,34 +10,17 @@ import { verifyBlock } from './verify'
 const debug = createDebug('sw')
 const cl = console.log
 
-export async function fetchCID (cid, event) {
-    let response = null
-    const { request } = event
-
-    try {
-        const interceptor = new Interceptor(cid, event)
-        response = await interceptor.fetch()
-
-        // Always fallback to origin server.
-        response = response || await fetch(request)
-    } catch (err) {
-        debug(`${request.url}: fetchCID err %O`, err)
-        response = await fetch(request)
-    }
-
-    return response
-}
-
 export class Interceptor {
-    constructor (cid, event) {
+    constructor (cid, rcid, event) {
         this.cid = cid
+        this.rcid = rcid
         this.event = event
         this.numBytesEnqueued = 0
     }
 
     get gatewayUrl () {
         const origin = process.env.GATEWAY_ORIGIN
-        return `${origin}/cid/${this.cid}`
+        return `${origin}/cid/${this.cid}?rcid=${this.rcid}`
     }
 
     // TODO: How to handle response headers?

@@ -1,0 +1,135 @@
+import createDebug from 'debug'
+import isIPFS from 'is-ipfs'
+import { v4 as uuidv4 } from 'uuid'
+
+import { Interceptor } from './interceptor'
+
+const debug = createDebug('sw')
+const cl = console.log
+
+const IS_PROD = process.env.NODE_ENV === 'production'
+if (!IS_PROD) {
+    createDebug.enable('sw')
+}
+
+export class Controller {
+    rcid = null
+    listenersAdded = false
+
+    constructor () {
+        this.rcid = getRetrievalClientId()
+    }
+
+    start () {
+        if (this.listenersAdded) { return }
+        this.listenersAdded = true
+
+        addEventListener('install', e => e.waitUntil(self.skipWaiting()))
+        addEventListener('activate', e => e.waitUntil(self.clients.claim()))
+        addEventListener('error', err => debug('sw err', err))
+        addEventListener('fetch', event => {
+            if (!meetsInterceptionPreconditions(event)) {
+                return
+            }
+
+            const { url } = event.request
+            const cid = findCID(url)
+
+            if (cid) {
+                debug('cid', cid, url)
+                event.respondWith(fetchCID(cid, this.rcid, event))
+            }
+        })
+    }
+}
+
+// rcid is added as a query param to the sw registration url
+function getRetrievalClientId () {
+    let rcid
+    try {
+        const urlObj = new URL(self.location.href)
+        rcid = urlObj.searchParams.get('rcid')
+    } catch {
+        rcid = uuidv4()
+    }
+    return rcid
+}
+
+// Modified from https://github.com/PinataCloud/ipfs-gateway-tools/blob/34533f3d5f3c0dd616327e2e5443072c27ea569d/src/index.js#L6
+function findCID (url) {
+    const splitUrl = url.split('/')
+    for (const split of splitUrl) {
+        if (isIPFS.cid(split)) {
+            return split
+        }
+        const splitOnDot = split.split('.')[0]
+        if(isIPFS.cid(splitOnDot)) {
+            return splitOnDot
+        }
+    }
+
+    return null
+}
+
+async function fetchCID (cid, rcid, event) {
+    let response = null
+    const { request } = event
+
+    try {
+        const interceptor = new Interceptor(cid, rcid, event)
+        response = await interceptor.fetch()
+    } catch (err) {
+        debug(`${request.url}: fetchCID err %O`, err)
+        response = await fetch(request)
+    }
+
+    return response
+}
+
+function meetsInterceptionPreconditions (event) {
+    try {
+        const { request } = event
+        const { url, destination, mode } = request
+        const isNavigation = mode === 'navigate'
+
+        if (isNavigation) {
+            checkURLFlagsOnNavigation(url)
+            return false
+        }
+
+        // TODO: Add check for range header, skip if present
+        if (['video', 'audio'].includes(destination)) {
+            return false
+        }
+
+        // https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
+        // "If a request is made to another origin with this mode set, the
+        // result is simply an error."
+        const isModeSameOrigin = mode === 'same-origin'
+
+        const interceptionPreconditionsMet = (
+            self.ReadableStream
+            && request.method === 'GET'
+            && !isModeSameOrigin
+        )
+
+        if (!interceptionPreconditionsMet) {
+            return false
+        }
+
+        return true
+    } catch (err) {
+        debug('meetsInterceptionPreconditions err %O', err)
+        return false
+    }
+}
+
+function checkURLFlagsOnNavigation (url) {
+    const { searchParams } = new URL(url)
+    const swDebugFlag = 'swDebug'
+
+    if (searchParams.has(swDebugFlag)) {
+        createDebug.enable('sw')
+        debug(`Enabling debug. gitHash: ${process.env.COMMITHASH}`)
+    }
+}

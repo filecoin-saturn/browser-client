@@ -41,7 +41,7 @@ module.exports = (env, { mode }) => {
         output: {
             path: abspath('dist'),
             clean: true,
-            publicPath: STATIC_ORIGIN,
+            publicPath: STATIC_ORIGIN + '/',
         },
         plugins: [
             new webpack.EnvironmentPlugin({
