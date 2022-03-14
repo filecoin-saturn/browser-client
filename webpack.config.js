@@ -15,8 +15,12 @@ const cl = console.log
 module.exports = (env, { mode }) => {
     // Switch to .env files once this gets unwieldy
     const IS_PROD = mode === 'production'
-    const STATIC_ORIGIN = IS_PROD ? '?' : 'http://localhost:8030'
-    const GATEWAY_ORIGIN = IS_PROD ? '?' : 'http://localhost:8031'
+    const STATIC_ORIGIN = IS_PROD
+        ? 'https://filecoin-saturn.s3.us-west-1.amazonaws.com'
+        : 'http://localhost:8030'
+    const GATEWAY_ORIGIN = IS_PROD
+        ? 'https://cdn.saturn.network'
+        : 'http://localhost:8031'
 
     return {
         // Uncomment snapshot for webpack to detect edits in node_modules/
