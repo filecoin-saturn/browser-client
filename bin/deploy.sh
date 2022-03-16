@@ -9,11 +9,9 @@ set -e
 if [[ "$1" == "-s" || "$1" == "--staging" ]]; then
     requiredBranch=staging
     deployEnv=staging
-    workflowSuffix=dev
 else
     requiredBranch=master
     deployEnv=prod
-    workflowSuffix=prod
 fi
 
 currentBranch=$(git rev-parse --abbrev-ref HEAD)
@@ -62,7 +60,7 @@ else
     printf "\n"
 fi
 
-workflowUrl=https://github.com/filecoin-project/retrieval-client/actions/workflows/ci.yml
+workflowUrl=https://github.com/filecoin-project/retrieval-client/actions/workflows/${deployEnv}.yml
 gitHash=$(git rev-parse --short HEAD)
 tagName=$deployEnv/$gitHash
 

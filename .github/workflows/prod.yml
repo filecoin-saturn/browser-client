@@ -1,14 +1,14 @@
-name: CI/CD
+name: Prod CI/CD
 on:
   push:
     tags:
       - prod/*
+env:
+  AWS_REGION: us-west-1
+  BUCKET: filecoin-saturn
 jobs:
   CICD:
     runs-on: ubuntu-latest
-    env:
-      AWS_REGION: us-west-1
-      BUCKET: filecoin-saturn
     steps:
       - uses: actions/checkout@v2
         with:

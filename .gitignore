@@ -1,3 +1,7 @@
 node_modules
 dist
 test-files
+
+terraform/.terraform*
+terraform/*.backup
+terraform/tf.txt
