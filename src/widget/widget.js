@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import { SW_PATH } from '@/constants'
+import { SW_PATH } from '@/constants.js'
 
 const cl = console.log
 

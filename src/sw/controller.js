@@ -2,7 +2,7 @@ import createDebug from 'debug'
 import isIPFS from 'is-ipfs'
 import { v4 as uuidv4 } from 'uuid'
 
-import { Interceptor } from './interceptor'
+import { Interceptor } from './interceptor.js'
 
 const debug = createDebug('sw')
 const cl = console.log

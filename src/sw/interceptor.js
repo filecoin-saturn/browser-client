@@ -3,9 +3,9 @@ import toIterable from 'browser-readablestream-to-it'
 import createDebug from 'debug'
 import { recursive as unixFsExporter } from 'ipfs-unixfs-exporter'
 
-import { wfetch, sleep } from '@/utils'
-import { IdbAsyncBlockStore } from './idb-async-blockstore'
-import { verifyBlock } from './verify'
+import { wfetch, sleep } from '@/utils.js'
+import { IdbAsyncBlockStore } from './idb-async-blockstore.js'
+import { verifyBlock } from './verify.js'
 
 const debug = createDebug('sw')
 const cl = console.log

@@ -1,18 +1,22 @@
-const path = require('path')
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const ESLintPlugin = require('eslint-webpack-plugin')
-const { GitRevisionPlugin } = require('git-revision-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const webpack = require('webpack')
+import ESLintPlugin from 'eslint-webpack-plugin'
+import { GitRevisionPlugin } from 'git-revision-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import webpack from 'webpack'
+
+import { SW_NAME, SW_CORE_NAME } from './src/constants.js'
 
 const gitPlugin = new GitRevisionPlugin({
     commithashCommand: 'rev-parse --short HEAD'
 })
 
+const __dirname = fileURLToPath(path.dirname(import.meta.url))
 const abspath = p => path.resolve(__dirname, p)
 const cl = console.log
 
-module.exports = (env, { mode }) => {
+export default (env, { mode }) => {
     // Switch to .env files once this gets unwieldy
     const IS_PROD = mode === 'production'
     const STATIC_ORIGIN = IS_PROD
@@ -29,8 +33,8 @@ module.exports = (env, { mode }) => {
         },
         entry: {
             widget: abspath('src/widget/widget.js'),
-            sw: abspath('src/sw/sw.js'),
-            'sw-core': abspath('src/sw/sw-core.js'),
+            [SW_NAME]: abspath('src/sw/saturn-sw.js'),
+            [SW_CORE_NAME]: abspath('src/sw/sw-core.js'),
         },
         devServer: {
             client: {

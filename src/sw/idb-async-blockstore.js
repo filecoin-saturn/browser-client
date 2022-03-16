@@ -3,7 +3,8 @@
 import * as idb from 'idb-keyval'
 import { CID } from 'multiformats'
 import { BaseBlockstore } from 'blockstore-core'
-import { Deferred, promiseTimeout } from '@/utils'
+
+import { Deferred, promiseTimeout } from '@/utils.js'
 
 /**
  * Save blocks to IndexedDB in the browser via idb-keyval
