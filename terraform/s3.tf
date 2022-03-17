@@ -19,7 +19,7 @@ resource "aws_s3_bucket_cors_configuration" "static_assets_cors" {
   }
 }
 
-resource "aws_s3_bucket_policy" "public_read" {
+resource "aws_s3_bucket_policy" "static_assets_policy" {
   bucket = aws_s3_bucket.static_assets.id
 
   policy = jsonencode({
