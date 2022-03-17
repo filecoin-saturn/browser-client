@@ -4,29 +4,63 @@ on:
     tags:
       - prod/*
 env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.PROD_GITHUB_CI_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_GITHUB_CI_AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCOUNT_ID: ${{ secrets.PROD_AWS_ACCOUNT_NUMBER }}
   AWS_REGION: us-west-1
+  ROOT_DOMAIN: saturn.network
   BUCKET: filecoin-saturn
 jobs:
-  CICD:
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.7
+
+      - name: Terraform Init
+        env:
+          BUCKET_NAME: "filecoin-saturn-terraform"
+          STATE_KEY: "rc-prod.tfstate"
+        run: |
+          terraform init \
+            -backend-config="bucket=${BUCKET_NAME}" \
+            -backend-config="key=${STATE_KEY}" \
+            -backend-config="region=${AWS_REGION}"
+
+      - name: Terraform Apply
+        env:
+          TF_VAR_allowed_account_ids: '["${{secrets.PROD_AWS_ACCOUNT_NUMBER}}"]'
+          TF_VAR_root_domain: ${{env.ROOT_DOMAIN}}
+          TF_VAR_static_assets_bucket: ${{env.BUCKET}}
+        run: terraform apply --auto-approve
+
+  cicd:
+    needs: terraform
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: master
 
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.PROD_GITHUB_CI_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.PROD_GITHUB_CI_AWS_SECRET_ACCESS_KEY }}
-          mask-aws-account-id: ${{ secrets.PROD_AWS_ACCOUNT_NUMBER }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{env.AWS_REGION}}
 
       - name: Build and Push Assets
+        env:
+          STATIC_ORIGIN: https://filecoin-saturn.s3.us-west-1.amazonaws.com
+          GATEWAY_ORIGIN: cdn.${{env.ROOT_DOMAIN}}
         run: |
           npm ci --also=dev
           npm run build
