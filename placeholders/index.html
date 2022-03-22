@@ -3,16 +3,35 @@
   <head>
     <meta charset="utf-8"/>
     <style>
-        img {
-            max-width: 200px;
+        body {
+            margin: 1rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 4rem;
+            align-items: end;
+            justify-items: center;
+            max-width: 1200px;
+            margin: auto;
+        }
+        img, video {
+            max-width: 400px;
+            max-height: 300px;
         }
     </style>
   </head>
   <body>
-      <img src="http://yo.com/cid/bafybeifgk5qa5r3etyi372ijwjqnoejmrgo4bnlk62kdipt47meghnnjqe">
-      <img src="https://cdn.magiceden.io/rs:fill:400:400:0:0/plain/https://bafybeiduvvj5h4d7femgjrbaa2onvgifgi7ce5a7wgi3x2sf5pl3qzo2eq.ipfs.dweb.link/3542.png?ext=png">
-      <img src="https://content-node.audius.co/ipfs/QmbRH7kzJWX4hfvF5mM33RVY3t8AksigTUpVxHy7KNRqxz/1000x1000.jpg">
-      <img src="https://greenpark.mypinata.cloud/ipfs/QmRd1QQHxgiLefbPohzEFU8oMPXzYZg9Jc26JQsTaYMpKh">
-      <audio controls src="https://ipfs.io/ipfs/QmNc79K9gJXquXjBrQz14HKm1kifckVnaj7pWtgqLq2zKd"></audio>
+      <div class="grid">
+            <img src="https://ipfs.io/ipfs/bafybeihfy4opphtnkbzihf5mfziioxitlqyuctnezauydnycaashti6asi/fail-mascot.gif">
+            <img src="https://ipfs.io/ipfs/bafybeicr7yeoegk5kcxn2er52gkbnp6dethflk475xlo2k3jramk6r5sfy/starry_night_full.jpg">
+            <img src="https://bafybeihebgozm5jsp4r7m5uic7ixa66lezcu57gsrm3c2gl6cn6kgkhv2e.ipfs.dweb.link/Mona_Lisa.png">
+            <video controls muted src="https://bafybeiar7i5hcwnv2bulqcdknt4vawurmsr5xd3r7ssa7mrjqvm4av4pbu.ipfs.dweb.link/bigbuckbunny.mp4"></video>
+            <video controls muted src="https://ipfs.io/ipfs/bafybeide6bhqso5anq4d5yu6h5xo57qv6ewsy4ddfs4ufouy55jtprgbwy/elephants-dream.webm"></video>
+            <video controls muted src="https://ipfs.io/ipfs/bafybeiam3scjzorx4k5fi3jq6w6juh7whfagzk7rct56ohntxli5q7vpwi/vacations.mp4"></video>
+            <audio controls muted src="https://bafybeigt4657qnz5bi2pa7tdsbiobny55hkpt5vupgnueex22tzvwxfiym.ipfs.dweb.link/bensound-thejazzpiano.mp3"></audio>
+            <audio controls muted src="https://ipfs.io/ipfs/bafybeicsyf343wpyrqtj3kn3qtf4eikwrkfpca5u5pje6jtzeuldc2huwu/ipanema_daydream.mp3"></audio>
+            <audio controls muted src="https://ipfs.io/ipfs/bafybeibcaz5czuecdiln2vk5ilzek72f63ixtnrhh5qfrcjcy3p7iqqb3a/MoonlightSonata.mp3"></audio>
+      </div>
   </body>
 </html>

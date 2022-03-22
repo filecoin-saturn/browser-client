@@ -32,6 +32,11 @@ resource "aws_cloudfront_cache_policy" "s3_cache_policy" {
 
 resource "aws_cloudfront_distribution" "s3" {
   enabled = true
+  aliases = [
+    var.root_domain,
+    "demo.${var.root_domain}"
+  ]
+  default_root_object = "index.html"
 
   origin {
     domain_name = aws_s3_bucket.static_assets.bucket_domain_name
@@ -45,8 +50,6 @@ resource "aws_cloudfront_distribution" "s3" {
       value = "https://${var.root_domain}"
     }
   }
-
-  aliases = [var.root_domain]
 
   default_cache_behavior {
     allowed_methods = ["GET", "HEAD", "OPTIONS"]

@@ -8,7 +8,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_GITHUB_CI_AWS_SECRET_ACCESS_KEY }}
   AWS_ACCOUNT_ID: ${{ secrets.PROD_AWS_ACCOUNT_NUMBER }}
   AWS_REGION: us-west-1
-  ROOT_DOMAIN: saturn.network
+  ROOT_DOMAIN: strn.network
   BUCKET: filecoin-saturn
 jobs:
   terraform:
@@ -59,12 +59,11 @@ jobs:
 
       - name: Build and Push Assets
         env:
-          STATIC_ORIGIN: https://filecoin-saturn.s3.us-west-1.amazonaws.com
-          GATEWAY_ORIGIN: cdn.${{env.ROOT_DOMAIN}}
+          STATIC_ORIGIN: https://${{env.ROOT_DOMAIN}}
+          GATEWAY_ORIGIN: https://cdn.${{env.ROOT_DOMAIN}}
         run: |
           npm ci --also=dev
           npm run build
 
           aws s3 cp dist/ s3://$BUCKET --recursive \
-            --exclude "*" --include "*.js" \
             --cache-control "public, max-age=3600" --only-show-errors

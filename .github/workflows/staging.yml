@@ -59,12 +59,11 @@ jobs:
 
       - name: Build and Push Assets
         env:
-          STATIC_ORIGIN: https://filecoin-saturn-staging.s3.us-west-1.amazonaws.com
-          GATEWAY_ORIGIN: cdn.${{env.ROOT_DOMAIN}}
+          STATIC_ORIGIN: https://${{env.ROOT_DOMAIN}}
+          GATEWAY_ORIGIN: https://cdn.${{env.ROOT_DOMAIN}}:8443
         run: |
           npm ci --also=dev
           npm run build
 
           aws s3 cp dist/ s3://$BUCKET --recursive \
-            --exclude "*" --include "*.js" \
             --cache-control "public, max-age=3600" --only-show-errors
