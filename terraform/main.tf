@@ -8,6 +8,13 @@ terraform {
   backend "s3" {}
 }
 
+# ACM requires us-east-1
+provider "aws" {
+  region              = "us-east-1"
+  alias               = "us-east-1"
+  allowed_account_ids = var.allowed_account_ids
+}
+
 provider "aws" {
   allowed_account_ids = var.allowed_account_ids
 }
