@@ -3,20 +3,24 @@
   <head>
     <meta charset="utf-8"/>
     <style>
+        :root {
+            --cell-width: 400px;
+            --cell-gap: 60px;
+        }
         body {
             margin: 1rem;
         }
         .grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-gap: 4rem;
+            grid-template-columns: repeat(auto-fit, var(--cell-width));
+            grid-gap: var(--cell-gap);
             align-items: end;
             justify-items: center;
-            max-width: 1200px;
+            max-width: calc(var(--cell-width) * 3 + var(--cell-gap) * 2);
             margin: auto;
         }
         img, video {
-            max-width: 400px;
+            max-width: var(--cell-width);
             max-height: 300px;
         }
     </style>
