@@ -98,7 +98,10 @@ export class Interceptor {
             mode: 'cors',
         })
 
-        const res = await fetch(originRequest)
+        const res = await fetch(originRequest, {
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors/CORSNotSupportingCredentials
+            credentials: 'omit'
+        })
         for await (const chunk of asAsyncIterable(res.body)) {
             this._enqueueChunk(controller, chunk)
         }
