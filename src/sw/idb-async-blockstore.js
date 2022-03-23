@@ -15,7 +15,7 @@ import { Deferred, promiseTimeout } from '@/utils.js'
 // TODO: Feels inefficient to create/delete a database on every intercepted
 // request? Just use 1 database with 1 store per request?
 export class IdbAsyncBlockStore extends BaseBlockstore {
-    constructor ({ timeout = 10_000 } = {}) {
+    constructor ({ timeout = 5_000 } = {}) {
         super()
 
         this.dbName = `IdbBlockStore-${Date.now()}-${Math.random()}`
