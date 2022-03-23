@@ -5,13 +5,15 @@
  * @param {object} opts - Fetch API options. Also accepts a 'timeout' number.
  */
 export async function wfetch (resource, opts = {}) {
+    let id
     if (Number.isFinite(opts.timeout)) {
         const controller = new AbortController()
         opts.signal = controller.signal
-        setTimeout(() => controller.abort(), opts.timeout)
+        id = setTimeout(() => controller.abort(), opts.timeout)
     }
 
     const response = await fetch(resource, opts)
+    clearTimeout(id)
 
     if (response.status >= 400) {
         const error = new Error(response.statusText || response.status)
