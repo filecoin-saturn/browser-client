@@ -116,10 +116,10 @@ export class Interceptor {
         this.numBytesEnqueued += chunk.length
     }
 
-    _close (controller) {
+    _close (controller = null) {
         if (this.isClosed) return
         
-        controller.close()
+        controller?.close()
         this.isClosed = true
     }
 
