@@ -65,7 +65,7 @@ export class Interceptor {
                     this._enqueueChunk(controller, chunk)
                 }
             }
-            controller.close()
+            this._close(controller)
         } finally {
             blockstore.close()
         }
@@ -106,15 +106,20 @@ export class Interceptor {
             this._enqueueChunk(controller, chunk)
         }
 
-        controller.close()
+        this._close(controller)
     }
 
     _enqueueChunk (controller, chunk) {
+        if (this.isClosed) return
+
         controller.enqueue(chunk)
         this.numBytesEnqueued += chunk.length
     }
 
-    _close () {
+    _close (controller) {
+        if (this.isClosed) return
+        
+        controller.close()
         this.isClosed = true
     }
 
