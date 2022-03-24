@@ -38,6 +38,7 @@ jobs:
           TF_VAR_allowed_account_ids: '["${{secrets.PROD_AWS_ACCOUNT_NUMBER}}"]'
           TF_VAR_root_domain: ${{env.ROOT_DOMAIN}}
           TF_VAR_static_assets_bucket: ${{env.BUCKET}}
+          TF_VAR_env: staging
         run: terraform apply --auto-approve
 
   cicd:
