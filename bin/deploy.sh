@@ -11,7 +11,7 @@ if [[ "$1" == "-s" || "$1" == "--staging" ]]; then
     deployEnv=staging
 else
     requiredBranch=master
-    deployEnv=prod
+    deployEnv=production
 fi
 
 currentBranch=$(git rev-parse --abbrev-ref HEAD)
@@ -24,7 +24,7 @@ if [ "$currentBranch" != "$requiredBranch" ]; then
     echo "To deploy to staging"
     echo "$ ./bin/deploy.sh -s"
     echo
-    echo "To deploy to prod"
+    echo "To deploy to production"
     echo "$ ./bin/deploy.sh"
     exit 1
 fi
