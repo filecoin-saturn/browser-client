@@ -1,8 +1,8 @@
-name: Prod CI/CD
+name: Production CI/CD
 on:
   push:
     tags:
-      - prod/*
+      - production/*
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.PROD_GITHUB_CI_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_GITHUB_CI_AWS_SECRET_ACCESS_KEY }}
@@ -26,7 +26,7 @@ jobs:
       - name: Terraform Init
         env:
           BUCKET_NAME: "filecoin-saturn-terraform"
-          STATE_KEY: "rc-prod.tfstate"
+          STATE_KEY: "rc-production.tfstate"
         run: |
           terraform init \
             -backend-config="bucket=${BUCKET_NAME}" \
