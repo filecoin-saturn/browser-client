@@ -82,11 +82,13 @@ export class Interceptor {
             }
         })()
 
-        const roots = await carItr.getRoots()
         // Shouldn't there only be 1 root?
-        for (const root of roots) {
-            yield * unixFsExporter(root, blockstore)
-        }
+        const roots = await carItr.getRoots()
+        const rootCid = roots[0]
+
+        this._ensureCarCidMatchesUrlCid(rootCid.toString())
+
+        yield * unixFsExporter(rootCid, blockstore)
     }
 
     // TODO: Need to account for this.numBytesEnqueued with range requests.
@@ -109,6 +111,19 @@ export class Interceptor {
         this._close(controller)
     }
 
+    // Does it make sense to check this condition?
+    _ensureCarCidMatchesUrlCid (carRootCid) {
+        const { destination } = this.event.request
+        // CAR files for range requests won't contain the url cid..right?
+        if (['video', 'audio'].includes(destination)) {
+            return
+        }
+
+        if (carRootCid !== this.cid) {
+            throw new Error('CAR file root cid doesnt match intercepted cid.')
+        }
+    }
+
     _enqueueChunk (controller, chunk) {
         if (this.isClosed) return
 
@@ -118,7 +133,7 @@ export class Interceptor {
 
     _close (controller = null) {
         if (this.isClosed) return
-        
+
         controller?.close()
         this.isClosed = true
     }
