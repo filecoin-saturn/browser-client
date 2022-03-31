@@ -4,45 +4,15 @@ on:
     tags:
       - staging/*
 env:
+  # How to sync these vars with other repos?
   AWS_ACCESS_KEY_ID: ${{ secrets.PROD_GITHUB_CI_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_GITHUB_CI_AWS_SECRET_ACCESS_KEY }}
   AWS_ACCOUNT_ID: ${{ secrets.PROD_AWS_ACCOUNT_NUMBER }}
-  AWS_REGION: us-west-1
+  AWS_REGION: us-west-2
   ROOT_DOMAIN: saturn-test.network
   BUCKET: filecoin-saturn-staging
 jobs:
-  terraform:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: terraform
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 1.1.7
-
-      - name: Terraform Init
-        env:
-          BUCKET_NAME: "filecoin-saturn-terraform"
-          STATE_KEY: "rc-staging.tfstate"
-        run: |
-          terraform init \
-            -backend-config="bucket=${BUCKET_NAME}" \
-            -backend-config="key=${STATE_KEY}" \
-            -backend-config="region=${AWS_REGION}"
-
-      - name: Terraform Apply
-        env:
-          TF_VAR_allowed_account_ids: '["${{secrets.PROD_AWS_ACCOUNT_NUMBER}}"]'
-          TF_VAR_root_domain: ${{env.ROOT_DOMAIN}}
-          TF_VAR_static_assets_bucket: ${{env.BUCKET}}
-          TF_VAR_env: staging
-        run: terraform apply --auto-approve
-
   cicd:
-    needs: terraform
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
