@@ -10,14 +10,12 @@ env:
   AWS_ACCOUNT_ID: ${{ secrets.PROD_AWS_ACCOUNT_NUMBER }}
   AWS_REGION: us-west-2
   ROOT_DOMAIN: strn.network
-  BUCKET: filecoin-saturn
+  PUBLIC_BUCKET: filecoin-saturn
 jobs:
   cicd:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: master
 
       - uses: actions/setup-node@v2
         with:
@@ -33,8 +31,8 @@ jobs:
           STATIC_ORIGIN: https://${{env.ROOT_DOMAIN}}
           GATEWAY_ORIGIN: https://cdn.${{env.ROOT_DOMAIN}}
         run: |
-          npm ci --also=dev
+          npm ci
           npm run build
 
-          aws s3 cp dist/ s3://$BUCKET --recursive \
+          aws s3 cp dist/ s3://$PUBLIC_BUCKET --recursive \
             --cache-control "public, max-age=3600" --only-show-errors
