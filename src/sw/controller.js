@@ -13,11 +13,11 @@ if (!IS_PROD) {
 }
 
 export class Controller {
-    rcid = null
+    clientId = null
     listenersAdded = false
 
     constructor () {
-        this.rcid = getRetrievalClientId()
+        this.clientId = getRetrievalClientId()
     }
 
     start () {
@@ -37,22 +37,22 @@ export class Controller {
 
             if (cid) {
                 debug('cid', cid, url)
-                event.respondWith(fetchCID(cid, this.rcid, event))
+                event.respondWith(fetchCID(cid, this.clientId, event))
             }
         })
     }
 }
 
-// rcid is added as a query param to the sw registration url
+// clientId is added as a query param to the sw registration url
 function getRetrievalClientId () {
-    let rcid
+    let clientId
     try {
         const urlObj = new URL(self.location.href)
-        rcid = urlObj.searchParams.get('rcid')
+        clientId = urlObj.searchParams.get('clientId')
     } catch {
-        rcid = uuidv4()
+        clientId = uuidv4()
     }
-    return rcid
+    return clientId
 }
 
 // Modified from https://github.com/PinataCloud/ipfs-gateway-tools/blob/34533f3d5f3c0dd616327e2e5443072c27ea569d/src/index.js#L6
@@ -71,12 +71,12 @@ function findCID (url) {
     return null
 }
 
-async function fetchCID (cid, rcid, event) {
+async function fetchCID (cid, clientId, event) {
     let response = null
     const { request } = event
 
     try {
-        const interceptor = new Interceptor(cid, rcid, event)
+        const interceptor = new Interceptor(cid, clientId, event)
         response = await interceptor.fetch()
     } catch (err) {
         debug(`${request.url}: fetchCID err %O`, err)

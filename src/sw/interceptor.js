@@ -11,9 +11,9 @@ const debug = createDebug('sw')
 const cl = console.log
 
 export class Interceptor {
-    constructor (cid, rcid, event) {
+    constructor (cid, clientId, event) {
         this.cid = cid
-        this.rcid = rcid
+        this.clientId = clientId
         this.event = event
         this.numBytesEnqueued = 0
         this.isClosed = false
@@ -21,7 +21,7 @@ export class Interceptor {
 
     get gatewayUrl () {
         const origin = process.env.GATEWAY_ORIGIN
-        return `${origin}/cid/${this.cid}?rcid=${this.rcid}`
+        return `${origin}/cid/${this.cid}?clientId=${this.clientId}`
     }
 
     // TODO: How to handle response headers?

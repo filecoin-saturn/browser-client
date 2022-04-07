@@ -8,9 +8,9 @@ const MDN_SW_DOCS_URL = 'https://developer.mozilla.org/en-US/docs/Web' +
                         '/API/Service_Worker_API/Using_Service_Workers' +
                         '#Why_is_my_service_worker_failing_to_register'
 
-async function installSw (rcid) {
+async function installSw (clientId) {
     try {
-        const path = `${SW_PATH}?rcid=${rcid}`
+        const path = `${SW_PATH}?clientId=${clientId}`
         await navigator.serviceWorker.register(path)
     } catch (err) {
         console.warn(
@@ -22,13 +22,13 @@ async function installSw (rcid) {
 }
 
 function ensureRetrievalClientId () {
-    const key = 'rcid'
-    let rcid = localStorage.getItem(key)
-    if (!rcid) {
-        rcid = uuidv4()
-        localStorage.setItem(key, rcid)
+    const key = 'clientId'
+    let clientId = localStorage.getItem(key)
+    if (!clientId) {
+        clientId = uuidv4()
+        localStorage.setItem(key, clientId)
     }
-    return rcid
+    return clientId
 }
 
 function initWidget () {
@@ -36,8 +36,8 @@ function initWidget () {
         return
     }
 
-    const rcid = ensureRetrievalClientId()
-    installSw(rcid)
+    const clientId = ensureRetrievalClientId()
+    installSw(clientId)
 }
 
 initWidget()
