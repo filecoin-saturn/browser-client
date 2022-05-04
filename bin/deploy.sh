@@ -29,17 +29,6 @@ if [ "$currentBranch" != "$requiredBranch" ]; then
     exit 1
 fi
 
-if ! git diff-index --quiet HEAD --; then
-    echo "Cannot deploy to $deployEnv."
-    echo "The git index is dirty, you can only deploy with a clean index."
-    echo
-    echo "Git command to clean the index before deploying:"
-    echo "$ git stash"
-    echo "$ ./deploy.sh"
-    echo "$ git stash pop"
-    exit 1
-fi
-
 git fetch
 
 localHeadHash=$(git rev-parse $requiredBranch)
