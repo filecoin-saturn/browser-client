@@ -19,7 +19,7 @@ const cl = console.log
 export default (env, { mode }) => {
     // Switch to .env files once this gets unwieldy
     const STATIC_ORIGIN = process.env.STATIC_ORIGIN ?? 'http://localhost:8030'
-    const GATEWAY_ORIGIN = process.env.GATEWAY_ORIGIN ?? 'http://localhost:8031'
+    const NODE_ORIGIN = process.env.NODE_ORIGIN ?? 'http://localhost:8031'
 
     return {
         // Uncomment snapshot for webpack to detect edits in node_modules/
@@ -50,7 +50,7 @@ export default (env, { mode }) => {
             new webpack.EnvironmentPlugin({
                 COMMITHASH: JSON.stringify(gitPlugin.commithash()),
                 STATIC_ORIGIN,
-                GATEWAY_ORIGIN,
+                NODE_ORIGIN,
             }),
             new ESLintPlugin({
                 emitError: false,

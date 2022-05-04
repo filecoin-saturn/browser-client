@@ -19,8 +19,8 @@ export class Interceptor {
         this.isClosed = false
     }
 
-    get gatewayUrl () {
-        const origin = process.env.GATEWAY_ORIGIN
+    get nodeUrl () {
+        const origin = process.env.NODE_ORIGIN
         return `${origin}/cid/${this.cid}?clientId=${this.clientId}`
     }
 
@@ -31,7 +31,7 @@ export class Interceptor {
     }
 
     async fetch () {
-        const response = await wfetch(this.gatewayUrl, { timeout: 3_000 })
+        const response = await wfetch(this.nodeUrl, { timeout: 3_000 })
         return this._createResponse(response)
     }
 
@@ -39,7 +39,7 @@ export class Interceptor {
         const self = this
         const readableStream = new ReadableStream({
             start (controller) {
-                self._streamFromGateway(response, controller)
+                self._streamFromNode(response, controller)
                     .catch(err => {
                         self._debug('Error', err)
                         self._streamFromOrigin(controller)
@@ -53,7 +53,7 @@ export class Interceptor {
         return new Response(readableStream, this.responseOptions)
     }
 
-    async _streamFromGateway (response, controller) {
+    async _streamFromNode (response, controller) {
         const blockstore = new IdbAsyncBlockStore()
         try {
             for await (const file of this._unpackCarFile(response.body, blockstore)) {

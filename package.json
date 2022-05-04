@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack serve --mode=development",
-    "gateway": "npx nodemon placeholders/gateway.js",
+    "node": "npx nodemon placeholders/mock-node.js",
     "build": "webpack --mode=production"
   },
   "author": "",

@@ -29,7 +29,7 @@ jobs:
       - name: Build and Push Assets
         env:
           STATIC_ORIGIN: https://${{env.ROOT_DOMAIN}}
-          GATEWAY_ORIGIN: https://cdn.${{env.ROOT_DOMAIN}}
+          NODE_ORIGIN: https://cdn.${{env.ROOT_DOMAIN}}
         run: |
           npm ci
           npm run build

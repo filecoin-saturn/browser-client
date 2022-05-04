@@ -1,4 +1,4 @@
-// Mock gateway that returns CAR files
+// Mock node that returns CAR files
 
 const http = require('http')
 const path = require('path')
@@ -28,4 +28,4 @@ app.get('/cid/:cid', (req, res, next) => {
 
 const port = process.env.PORT || 8031
 const server = http.createServer(app)
-server.listen(port, () => cl(`Gateway running on port ${port}`))
+server.listen(port, () => cl(`Node running on port ${port}`))
