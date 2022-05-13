@@ -21,8 +21,8 @@ async function installSw (clientId) {
     }
 }
 
-function ensureRetrievalClientId () {
-    const key = 'clientId'
+function getRetrievalClientId () {
+    const key = 'saturnClientId'
     let clientId = localStorage.getItem(key)
     if (!clientId) {
         clientId = uuidv4()
@@ -36,7 +36,7 @@ function initWidget () {
         return
     }
 
-    const clientId = ensureRetrievalClientId()
+    const clientId = getRetrievalClientId()
     installSw(clientId)
 }
 
