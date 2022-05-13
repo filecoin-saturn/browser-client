@@ -76,6 +76,7 @@ export class Interceptor {
         const carItr = await CarBlockIterator.fromIterable(asAsyncIterable(readable))
 
         ;(async () => {
+            // TODO: Catch and handle error
             for await (const { cid, bytes } of carItr) {
                 await verifyBlock(cid, bytes)
                 await blockstore.put(cid, bytes)
