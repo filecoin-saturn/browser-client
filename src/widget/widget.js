@@ -31,10 +31,33 @@ function getRetrievalClientId () {
     return clientId
 }
 
+function addHeadElement (tag, props) {
+    const selector = `${tag}#${props.id}`
+    let $el = document.head.querySelector(selector)
+    if ($el) { // Element could already exist due to a prerender
+        return $el
+    }
+
+    $el = document.createElement(tag)
+    for (const key in props) {
+        $el[key] = props[key]
+    }
+    document.head.appendChild($el)
+
+    return $el
+}
+
 function initWidget () {
     if (!('serviceWorker' in navigator)) {
         return
     }
+
+    addHeadElement('link', {
+        href: process.env.NODE_ORIGIN,
+        crossOrigin: '',
+        rel: 'preconnect',
+        id: 'saturn-preconnect'
+    })
 
     const clientId = getRetrievalClientId()
     installSw(clientId)
