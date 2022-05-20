@@ -112,7 +112,6 @@ export class Interceptor {
         this._close(controller)
     }
 
-    // Does it make sense to check this condition?
     _ensureCarCidMatchesUrlCid (carRootCid) {
         const { destination } = this.event.request
         // CAR files for range requests won't contain the url cid..right?

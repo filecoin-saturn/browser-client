@@ -9,7 +9,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_GITHUB_CI_AWS_SECRET_ACCESS_KEY }}
   AWS_ACCOUNT_ID: ${{ secrets.PROD_AWS_ACCOUNT_NUMBER }}
   AWS_REGION: us-west-2
-  ROOT_DOMAIN: strn.network
+  ROOT_DOMAIN: strn.pl
   PUBLIC_BUCKET: filecoin-saturn
 jobs:
   cicd:
