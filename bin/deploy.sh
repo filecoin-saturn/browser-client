@@ -10,7 +10,7 @@ if [[ "$1" == "-s" || "$1" == "--staging" ]]; then
     requiredBranch=staging
     deployEnv=staging
 else
-    requiredBranch=master
+    requiredBranch=main
     deployEnv=production
 fi
 

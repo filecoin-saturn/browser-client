@@ -18,4 +18,4 @@ a requirement when retrieving content in a trustless manner from community hoste
 
 ## License
 
-Dual-licensed under [MIT](https://github.com/filecoin-project/saturn-node/blob/master/LICENSE-MIT) + [Apache 2.0](https://github.com/filecoin-project/saturn-node/blob/master/LICENSE-APACHE)
+Dual-licensed under [MIT](https://github.com/filecoin-project/saturn-node/blob/main/LICENSE-MIT) + [Apache 2.0](https://github.com/filecoin-project/saturn-node/blob/main/LICENSE-APACHE)
