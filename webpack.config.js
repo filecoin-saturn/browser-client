@@ -63,7 +63,7 @@ export default (env, { mode }) => {
                 // Use demo.html instead of index.html to avoid overwriting
                 // the existing index.html in the s3 bucket.
                 filename: 'demo.html',
-                template: abspath('placeholders/index.html'),
+                template: abspath('placeholders/demo.html'),
                 chunks: ['widget']
             })
         ],
