@@ -28,8 +28,8 @@ jobs:
 
       - name: Build and Push Assets
         env:
-          STATIC_ORIGIN: https://cdn.${{env.ROOT_DOMAIN}}
-          NODE_ORIGIN: https://${{env.ROOT_DOMAIN}}
+          STATIC_ORIGIN: https://strn.network
+          NODE_ORIGIN: https://strn.pl
         run: |
           npm ci
           npm run build
