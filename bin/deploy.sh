@@ -29,6 +29,7 @@ if [ "$currentBranch" != "$requiredBranch" ]; then
     exit 1
 fi
 
+git push
 git fetch
 
 localHeadHash=$(git rev-parse $requiredBranch)
