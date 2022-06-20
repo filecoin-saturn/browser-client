@@ -17,7 +17,7 @@ a requirement when retrieving content in a trustless manner from community hoste
 
 ## Adding the Retrieval Client to your website
 
-1. Add this script tag to the `<head>` tag.
+1. Add this script tag to the `<head>` tag. This will install the service worker.
 
 ```html
 <script async src="https://strn.network/widget.js">
