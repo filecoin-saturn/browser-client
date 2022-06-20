@@ -16,6 +16,17 @@ a requirement when retrieving content in a trustless manner from community hoste
 
 `$ npm run dev`
 
+## Adding the Retrieval Client to your website
+
+1. Add this script tag to the `<head>` tag.
+
+```html
+<script async src="https://strn.network/widget.js">
+```
+
+2. Host the service worker file from the root path of your website's domain. For example, if your website is https://example.com, host the service worker file at https://example.com/saturn-sw.js. The file can be found here https://strn.pl/saturn-sw.js
+
+
 ## License
 
 Dual-licensed under [MIT](https://github.com/filecoin-project/saturn-node/blob/main/LICENSE-MIT) + [Apache 2.0](https://github.com/filecoin-project/saturn-node/blob/main/LICENSE-APACHE)
