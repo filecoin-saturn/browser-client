@@ -35,9 +35,6 @@ export default (env, { mode }) => {
             client: {
                 logging: 'warn'
             },
-            historyApiFallback: {
-                index: 'demo.html',
-            },
             static: abspath('dist'),
             port: 8030,
             // hot: false,
@@ -60,10 +57,7 @@ export default (env, { mode }) => {
                 emitWarning: false,
             }),
             new HtmlWebpackPlugin({
-                // Use demo.html instead of index.html to avoid overwriting
-                // the existing index.html in the s3 bucket.
-                filename: 'demo.html',
-                template: abspath('placeholders/demo.html'),
+                template: abspath('placeholders/index.html'),
                 chunks: ['widget']
             })
         ],
