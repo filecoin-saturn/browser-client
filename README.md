@@ -23,7 +23,9 @@ a requirement when retrieving content in a trustless manner from community hoste
 <script async src="https://strn.network/widget.js">
 ```
 
-2. Host the service worker file from the root path of your website's domain. For example, if your website is https://example.com, host the service worker file at https://example.com/saturn-sw.js. The file can be found here https://strn.pl/saturn-sw.js
+2. Host the service worker file from the root path of your website's domain. For example, if your website is https://example.com, host the service worker file at https://example.com/saturn-sw.js.
+
+    The file can be found here https://strn.pl/saturn-sw.js
 
 
 ## License
