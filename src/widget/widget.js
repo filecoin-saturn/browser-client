@@ -14,7 +14,7 @@ async function installSw (clientId) {
         await navigator.serviceWorker.register(path)
     } catch (err) {
         console.warn(
-            'Failed to install Filecoin\'s Service Worker.\n\n' +
+            'Failed to install Saturn\'s Service Worker.\n\n' +
             `For installation help, see ${MDN_SW_DOCS_URL}.\n\n`,
             err.name, err.message
         )
