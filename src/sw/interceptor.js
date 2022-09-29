@@ -20,7 +20,7 @@ export class Interceptor {
     }
 
     get nodeUrl () {
-        const origin = process.env.NODE_ORIGIN
+        const origin = process.env.UNTRUSTED_L1_ORIGIN
         return `${origin}/cid/${this.cid}?clientId=${this.clientId}`
     }
 

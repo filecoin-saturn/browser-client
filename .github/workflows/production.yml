@@ -29,7 +29,8 @@ jobs:
       - name: Build and Push Assets
         env:
           STATIC_ORIGIN: https://strn.network
-          NODE_ORIGIN: https://strn.pl
+          TRUSTED_L1_ORIGIN: https://core.strn.pl
+          UNTRUSTED_L1_ORIGIN: https://rings.strn.pl
         run: |
           npm ci
           npm run build

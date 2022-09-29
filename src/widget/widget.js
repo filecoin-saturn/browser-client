@@ -53,7 +53,7 @@ function initWidget () {
     }
 
     addHeadElement('link', {
-        href: process.env.NODE_ORIGIN,
+        href: process.env.UNTRUSTED_L1_ORIGIN,
         crossOrigin: '',
         rel: 'preconnect',
         id: 'saturn-preconnect'

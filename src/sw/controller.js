@@ -33,6 +33,7 @@ export class Controller {
             }
 
             const { url } = event.request
+            // TODO: Check for ipns too?
             const cid = findCID(url)
 
             if (cid) {
