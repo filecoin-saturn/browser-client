@@ -19,9 +19,23 @@ export class Interceptor {
         this.isClosed = false
     }
 
-    get nodeUrl () {
-        const origin = process.env.UNTRUSTED_L1_ORIGIN
-        return `${origin}/cid/${this.cid}?clientId=${this.clientId}`
+    get cidUrl () {
+        const { hostname, pathname, search } = new URL(this.event.request.url)
+        const L1Origin = process.env.UNTRUSTED_L1_ORIGIN
+        let cidUrl
+
+        if (pathname.startsWith('/ipfs/') || pathname.startsWith('/ipns/')) {
+            cidUrl = new URL(L1Origin + pathname + search)
+        } else if (hostname.includes(this.cid)) {
+            // https://<cid>.ipfs.dweb.link/cat.png -> https://strn.pl/ipfs/<cid>/cat.png
+            const url = L1Origin + '/ipfs/' + this.cid + pathname + search
+            cidUrl = new URL(url)
+        }
+
+        cidUrl.searchParams.set('clientId', this.clientId)
+        cidUrl.searchParams.set('format', 'car')
+
+        return cidUrl
     }
 
     // TODO: How to handle response headers?
@@ -31,7 +45,7 @@ export class Interceptor {
     }
 
     async fetch () {
-        const response = await wfetch(this.nodeUrl, { timeout: 3_000 })
+        const response = await wfetch(this.cidUrl, { timeout: 3_000 })
         return this._createResponse(response)
     }
 
@@ -139,7 +153,7 @@ export class Interceptor {
     }
 
     _debug (...args) {
-        debug(this.cid, ...args)
+        debug(this.event.request.url, ...args)
     }
 }
 
