@@ -6,6 +6,7 @@ import { recursive as unixFsExporter } from 'ipfs-unixfs-exporter'
 import { wfetch, mergeAsyncIterables, sleep } from '@/utils.js'
 import { IdbAsyncBlockStore } from './idb-async-blockstore.js'
 import { verifyBlock, isVerifiableRequest } from './verify.js'
+import { reporter } from './reporter.js'
 
 const debug = createDebug('sw')
 const cl = console.log
@@ -108,12 +109,10 @@ export class Interceptor {
             this._close(controller)
             blockstore.close()
 
-            this.log.requestDuration = (
-                new Date() - this.log.localTime) / 1000
+            this._queueLogReport()
+
             const duration = Date.now() - start
             this._debug(`Done in ${duration}ms. Enqueued ${this.numBytesEnqueued}`)
-
-            this._queueLogReport()
         }
     }
 
@@ -203,6 +202,10 @@ export class Interceptor {
     _queueLogReport () {
         if (this.isLogQueued) { return }
         this.isLogQueued = true
+
+        this.log.requestDuration = (new Date() - this.log.localTime) / 1000
+
+        reporter.add(this.log)
     }
 
     _close (controller = null) {

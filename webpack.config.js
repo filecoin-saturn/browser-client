@@ -18,9 +18,12 @@ const cl = console.log
 
 export default (env, { mode }) => {
     // Switch to .env files once this gets unwieldy
-    const STATIC_ORIGIN = process.env.STATIC_ORIGIN ?? 'http://localhost:8030'
-    const TRUSTED_L1_ORIGIN = process.env.TRUSTED_L1_ORIGIN ?? 'http://localhost:8031'
-    const UNTRUSTED_L1_ORIGIN = process.env.UNTRUSTED_L1_ORIGIN ?? 'http://localhost:8031'
+    const e = process.env
+    const STATIC_ORIGIN = e.STATIC_ORIGIN ?? 'http://localhost:8030'
+    const TRUSTED_L1_ORIGIN = e.TRUSTED_L1_ORIGIN ?? 'http://localhost:8031'
+    const UNTRUSTED_L1_ORIGIN = e.UNTRUSTED_L1_ORIGIN ?? 'https://localhost'
+    const LOG_INGESTOR_URL = e.LOG_INGESTOR_URL ?? 'https://mytvpqv54yawlsraubdzie5k2m0ggkjv.lambda-url.us-west-2.on.aws'
+
 
     return {
         // Uncomment snapshot for webpack to detect edits in node_modules/
@@ -53,6 +56,7 @@ export default (env, { mode }) => {
                 STATIC_ORIGIN,
                 TRUSTED_L1_ORIGIN,
                 UNTRUSTED_L1_ORIGIN,
+                LOG_INGESTOR_URL,
             }),
             new ESLintPlugin({
                 emitError: false,
