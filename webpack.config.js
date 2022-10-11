@@ -33,7 +33,7 @@ export default (env, { mode }) => {
         entry: {
             widget: abspath('src/widget/widget.js'),
             [SW_NAME]: abspath('src/sw/saturn-sw.js'),
-            [SW_CORE_NAME]: abspath('src/sw/sw-core.js'),
+            [SW_CORE_NAME]: abspath('src/sw/saturn-sw-core.js'),
         },
         devServer: {
             client: {

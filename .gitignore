@@ -1,5 +1,7 @@
 .DS_Store
 .local
 node_modules
-dist
 test-files
+
+# dist folder is watched by homepage git hook.
+dist/index.html
