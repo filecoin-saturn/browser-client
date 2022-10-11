@@ -12,7 +12,7 @@ module.exports = {
             'error',
             'unix'
         ],
-        'max-len': ['error', { code: 80, ignoreUrls: true }],
+        'max-len': ['error', { code: 100, ignoreUrls: true }],
         'no-unused-vars': ['error', {
             varsIgnorePattern: '^_|cl',
             ignoreRestSiblings: true

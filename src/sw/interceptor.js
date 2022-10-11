@@ -3,12 +3,14 @@ import toIterable from 'browser-readablestream-to-it'
 import createDebug from 'debug'
 import { recursive as unixFsExporter } from 'ipfs-unixfs-exporter'
 
-import { wfetch, sleep } from '@/utils.js'
+import { wfetch, mergeAsyncIterables, sleep } from '@/utils.js'
 import { IdbAsyncBlockStore } from './idb-async-blockstore.js'
-import { verifyBlock } from './verify.js'
+import { verifyBlock, isVerifiableRequest } from './verify.js'
 
 const debug = createDebug('sw')
 const cl = console.log
+
+const UNTRUSTED_L1_HOSTNAME = process.env.UNTRUSTED_L1_ORIGIN.replace('https://', '')
 
 export class Interceptor {
     constructor (cid, clientId, event) {
@@ -17,25 +19,9 @@ export class Interceptor {
         this.event = event
         this.numBytesEnqueued = 0
         this.isClosed = false
-    }
-
-    get cidUrl () {
-        const { hostname, pathname, search } = new URL(this.event.request.url)
-        const L1Origin = process.env.UNTRUSTED_L1_ORIGIN
-        let cidUrl
-
-        if (pathname.startsWith('/ipfs/') || pathname.startsWith('/ipns/')) {
-            cidUrl = new URL(L1Origin + pathname + search)
-        } else if (hostname.includes(this.cid)) {
-            // https://<cid>.ipfs.dweb.link/cat.png -> https://strn.pl/ipfs/<cid>/cat.png
-            const url = L1Origin + '/ipfs/' + this.cid + pathname + search
-            cidUrl = new URL(url)
-        }
-
-        cidUrl.searchParams.set('clientId', this.clientId)
-        cidUrl.searchParams.set('format', 'car')
-
-        return cidUrl
+        this.saturnUrl = createSaturnUrl(event.request.url, cid, clientId)
+        this.log = createLog(this.saturnUrl)
+        this.isLogQueued = false
     }
 
     // TODO: How to handle response headers?
@@ -45,19 +31,46 @@ export class Interceptor {
     }
 
     async fetch () {
-        const response = await wfetch(this.cidUrl, { timeout: 3_000 })
+        let response
+        try {
+            response = await wfetch(this.saturnUrl, { timeout: 2_000 })
+        } catch (err) {
+            // TODO: Handle abort error from the 2s timeout
+            if (err.response) {
+                this._updateLogWithResponse(err.response)
+            } else {
+                this.log.ifNetworkError = err.message
+            }
+            this._queueLogReport()
+
+            throw err
+        }
+
+        this._updateLogWithResponse(response)
+
         return this._createResponse(response)
+    }
+
+    _updateLogWithResponse (response) {
+        const { headers } = response
+
+        this.log.httpStatusCode = response.status
+        this.log.nodeId = headers.get('saturn-node-id')
+        this.log.cacheHit = headers.get('saturn-cache-status') === 'HIT'
+        this.log.httpProtocol = headers.get('quic-status')
+        this.log.requestId = headers.get('saturn-transfer-id')
     }
 
     _createResponse (response) {
         const self = this
         const readableStream = new ReadableStream({
-            start (controller) {
-                self._streamFromNode(response, controller)
-                    .catch(err => {
-                        self._debug('Error', err)
-                        self._streamFromOrigin(controller)
-                    })
+            async start (controller) {
+                try {
+                    await self._streamFromNode(response, controller)
+                } catch (err) {
+                    self._debug('Error', err)
+                    self._streamFromOrigin(controller)
+                }
             },
             cancel () {
                 self._close()
@@ -68,20 +81,39 @@ export class Interceptor {
     }
 
     async _streamFromNode (response, controller) {
+        const start = Date.now()
         const blockstore = new IdbAsyncBlockStore()
-        try {
-            for await (const file of this._unpackCarFile(response.body, blockstore)) {
-                if (file.type === 'directory') { continue }
+        const isVerifiable = isVerifiableRequest(this.saturnUrl.pathname)
+        const readable = response.body.pipeThrough(this._logStream())
+        let blockIndex = 0
 
-                // Add byte offsets here?
-                const opts = {}
-                for await (const chunk of file.content(opts)) {
-                    this._enqueueChunk(controller, chunk)
+        try {
+            for await (const data of this._unpackCarFile(readable, blockstore)) {
+                if (data.cid && data.bytes) {
+                    const { cid, bytes } = data
+                    // CAR files will have the root CID as the first block.
+                    if (blockIndex === 0 && isVerifiable) {
+                        this._ensureBlockCidMatchesUrlCid(cid.toString())
+                    }
+
+                    await verifyBlock(cid, bytes)
+                    await blockstore.put(cid, bytes)
+
+                    blockIndex++
+                } else {
+                    this._enqueueChunk(controller, data)
                 }
             }
-            this._close(controller)
         } finally {
+            this._close(controller)
             blockstore.close()
+
+            this.log.requestDuration = (
+                new Date() - this.log.localTime) / 1000
+            const duration = Date.now() - start
+            this._debug(`Done in ${duration}ms. Enqueued ${this.numBytesEnqueued}`)
+
+            this._queueLogReport()
         }
     }
 
@@ -89,21 +121,27 @@ export class Interceptor {
     async * _unpackCarFile (readable, blockstore) {
         const carItr = await CarBlockIterator.fromIterable(asAsyncIterable(readable))
 
-        ;(async () => {
-            // TODO: Catch and handle error
-            for await (const { cid, bytes } of carItr) {
-                await verifyBlock(cid, bytes)
-                await blockstore.put(cid, bytes)
-            }
-        })()
-
         // Shouldn't there only be 1 root?
         const roots = await carItr.getRoots()
         const rootCid = roots[0]
 
-        this._ensureCarCidMatchesUrlCid(rootCid.toString())
+        const chunkItr = this.fileChunkItr(unixFsExporter(rootCid, blockstore))
 
-        yield * unixFsExporter(rootCid, blockstore)
+        // Merging these 2 iterators makes it easier to exit the async context
+        // if a verify error - or any error - occurs. Otherwise there'll be
+        // 2 separate async loops and it's harder to coordinate them.
+        yield * mergeAsyncIterables(chunkItr, carItr)
+    }
+
+    async * fileChunkItr (exporter) {
+        for await (const data of exporter) {
+            if (data.type === 'directory') { continue }
+            // Add byte offsets here?
+            const opts = {}
+            for await (const chunk of data.content(opts)) {
+                yield chunk
+            }
+        }
     }
 
     // TODO: Need to account for this.numBytesEnqueued with range requests.
@@ -126,15 +164,32 @@ export class Interceptor {
         this._close(controller)
     }
 
-    _ensureCarCidMatchesUrlCid (carRootCid) {
+    // Doesn't transform the stream, just records metrics.
+    _logStream () {
+        const self = this
+        return new TransformStream({
+            transform (chunk, controller) {
+                if (self.log.ttfbMs === null) {
+                    self.log.ttfbMs = new Date() - self.log.localTime
+                }
+                self.log.numBytesSent += chunk.length
+
+                controller.enqueue(chunk)
+            }
+        })
+    }
+
+    _ensureBlockCidMatchesUrlCid (blockCid) {
         const { destination } = this.event.request
         // CAR files for range requests won't contain the url cid..right?
         if (['video', 'audio'].includes(destination)) {
             return
         }
 
-        if (carRootCid !== this.cid) {
-            throw new Error('CAR file root cid doesnt match intercepted cid.')
+        if (blockCid !== this.cid) {
+            const msg = 'block cid doesnt match URL cid. ' +
+                `blockCid=${blockCid} urlCid=${this.cid}`
+            throw new Error(msg)
         }
     }
 
@@ -143,6 +198,11 @@ export class Interceptor {
 
         controller.enqueue(chunk)
         this.numBytesEnqueued += chunk.length
+    }
+
+    _queueLogReport () {
+        if (this.isLogQueued) { return }
+        this.isLogQueued = true
     }
 
     _close (controller = null) {
@@ -154,6 +214,46 @@ export class Interceptor {
 
     _debug (...args) {
         debug(this.event.request.url, ...args)
+    }
+}
+
+function createSaturnUrl (url, cid, clientId) {
+    const { hostname, pathname, search } = new URL(url)
+    const L1Origin = process.env.TRUSTED_L1_ORIGIN
+    let saturnUrl
+
+    if (pathname.startsWith('/ipfs/') || pathname.startsWith('/ipns/')) {
+        saturnUrl = new URL(L1Origin + pathname + search)
+    } else if (hostname.includes(cid)) {
+        // https://<cid>.ipfs.dweb.link/cat.png -> https://strn.pl/ipfs/<cid>/cat.png
+        const url = L1Origin + '/ipfs/' + cid + pathname + search
+        saturnUrl = new URL(url)
+    }
+
+    if (isVerifiableRequest(saturnUrl.pathname)) {
+        saturnUrl.hostname = UNTRUSTED_L1_HOSTNAME
+    }
+
+    saturnUrl.searchParams.set('clientId', clientId)
+    saturnUrl.searchParams.set('format', 'car')
+
+    return saturnUrl
+}
+
+function createLog (saturnUrl) {
+    return {
+        nodeId: null,
+        cacheHit: false,
+        url: saturnUrl,
+        localTime: new Date(),
+        numBytesSent: null,
+        range: null,
+        requestDuration: null,
+        requestId: null,
+        httpStatusCode: null,
+        httpProtocol: null,
+        ifNetworkError: null,
+        ttfbMs: null,
     }
 }
 

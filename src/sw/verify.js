@@ -44,3 +44,9 @@ export async function verifyBlock (cid, bytes) {
             `Mismatch: digest of bytes (${toHex(hash)}) does not match digest in CID (${toHex(cid.multihash.digest)})`)
     }
 }
+
+// Only /ipfs/<cid> is verifiable. Not subpaths, not /ipns.
+export function isVerifiableRequest (pathname) {
+    const segments = pathname.split('/').filter(Boolean)
+    return segments[0] === 'ipfs' && segments.length === 2
+}
