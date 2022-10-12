@@ -31,7 +31,7 @@ jobs:
           STATIC_ORIGIN: https://${{env.ROOT_DOMAIN}}
           TRUSTED_L1_ORIGIN: https://${{env.ROOT_DOMAIN}}
           UNTRUSTED_L1_ORIGIN: https://${{env.ROOT_DOMAIN}}
-          LOG_INGESTOR_URL: https://mytvpqv54yawlsraubdzie5k2m0ggkjv.lambda-url.us-west-2.on.aws
+          LOG_INGESTOR_URL: https://p6wofrb2zgwrf26mcxjpprivie0lshfx.lambda-url.us-west-2.on.aws
         run: |
           npm ci
           npm run build

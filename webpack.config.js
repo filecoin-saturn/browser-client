@@ -22,7 +22,7 @@ export default (env, { mode }) => {
     const STATIC_ORIGIN = e.STATIC_ORIGIN ?? 'http://localhost:8030'
     const TRUSTED_L1_ORIGIN = e.TRUSTED_L1_ORIGIN ?? 'http://localhost:8031'
     const UNTRUSTED_L1_ORIGIN = e.UNTRUSTED_L1_ORIGIN ?? 'https://localhost'
-    const LOG_INGESTOR_URL = e.LOG_INGESTOR_URL ?? 'https://mytvpqv54yawlsraubdzie5k2m0ggkjv.lambda-url.us-west-2.on.aws'
+    const LOG_INGESTOR_URL = e.LOG_INGESTOR_URL ?? 'https://p6wofrb2zgwrf26mcxjpprivie0lshfx.lambda-url.us-west-2.on.aws'
 
 
     return {
