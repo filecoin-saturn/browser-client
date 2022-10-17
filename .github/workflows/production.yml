@@ -39,3 +39,12 @@ jobs:
 
           aws s3 cp dist/ s3://$PUBLIC_BUCKET --recursive \
             --cache-control "public, max-age=3600" --only-show-errors
+            
+      - name: Trigger ./dist/* file replication in filecoin-saturn/homepage repo
+        run: |
+          curl \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{secrets.ACCESS_TOKEN}}" \
+          https://api.github.com/repos/filecoin-saturn/homepage/actions/workflows/copy-retrieval-client-files.yml/dispatches \
+          -d '{"ref": "main"}'
