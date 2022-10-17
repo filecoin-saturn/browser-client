@@ -29,6 +29,7 @@ jobs:
       - name: Build and Push Assets
         env:
           STATIC_ORIGIN: https://strn.network
+          L1_ORIGIN: https://strn.pl
           TRUSTED_L1_ORIGIN: https://core.strn.pl
           UNTRUSTED_L1_ORIGIN: https://rings.strn.pl
           LOG_INGESTOR_URL: https://twb3qukm2i654i3tnvx36char40aymqq.lambda-url.us-west-2.on.aws

@@ -11,7 +11,7 @@ import { reporter } from './reporter.js'
 const debug = createDebug('sw')
 const cl = console.log
 
-const UNTRUSTED_L1_HOSTNAME = process.env.UNTRUSTED_L1_ORIGIN.replace('https://', '')
+const TRUSTED_L1_HOSTNAME = process.env.TRUSTED_L1_ORIGIN.replace('https://', '')
 
 export class Interceptor {
     constructor (cid, clientId, event) {
@@ -222,19 +222,19 @@ export class Interceptor {
 
 function createSaturnUrl (url, cid, clientId) {
     const { hostname, pathname, search } = new URL(url)
-    const L1Origin = process.env.TRUSTED_L1_ORIGIN
+    const L1_ORIGIN = process.env.L1_ORIGIN
     let saturnUrl
 
     if (pathname.startsWith('/ipfs/') || pathname.startsWith('/ipns/')) {
-        saturnUrl = new URL(L1Origin + pathname + search)
+        saturnUrl = new URL(L1_ORIGIN + pathname + search)
     } else if (hostname.includes(cid)) {
         // https://<cid>.ipfs.dweb.link/cat.png -> https://strn.pl/ipfs/<cid>/cat.png
-        const url = L1Origin + '/ipfs/' + cid + pathname + search
+        const url = L1_ORIGIN + '/ipfs/' + cid + pathname + search
         saturnUrl = new URL(url)
     }
 
-    if (isVerifiableRequest(saturnUrl.pathname)) {
-        saturnUrl.hostname = UNTRUSTED_L1_HOSTNAME
+    if (!isVerifiableRequest(saturnUrl.pathname)) {
+        saturnUrl.hostname = TRUSTED_L1_HOSTNAME
     }
 
     saturnUrl.searchParams.set('clientId', clientId)

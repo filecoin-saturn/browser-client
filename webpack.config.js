@@ -20,6 +20,7 @@ export default (env, { mode }) => {
     // Switch to .env files once this gets unwieldy
     const e = process.env
     const STATIC_ORIGIN = e.STATIC_ORIGIN ?? 'http://localhost:8030'
+    const L1_ORIGIN = e.L1_ORIGIN ?? 'http://localhost:8031'
     const TRUSTED_L1_ORIGIN = e.TRUSTED_L1_ORIGIN ?? 'http://localhost:8031'
     const UNTRUSTED_L1_ORIGIN = e.UNTRUSTED_L1_ORIGIN ?? 'https://localhost'
     const LOG_INGESTOR_URL = e.LOG_INGESTOR_URL ?? 'https://p6wofrb2zgwrf26mcxjpprivie0lshfx.lambda-url.us-west-2.on.aws'
@@ -54,6 +55,7 @@ export default (env, { mode }) => {
             new webpack.EnvironmentPlugin({
                 COMMITHASH: JSON.stringify(gitPlugin.commithash()),
                 STATIC_ORIGIN,
+                L1_ORIGIN,
                 TRUSTED_L1_ORIGIN,
                 UNTRUSTED_L1_ORIGIN,
                 LOG_INGESTOR_URL,
