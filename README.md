@@ -1,9 +1,9 @@
-# Saturn Retrieval Client
+# Saturn Browser Client
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](https://protocol.ai/)
 [![](https://img.shields.io/badge/project-Filecoin-blue.svg?style=flat-square)](https://filecoin.io/)
 
-The Saturn Retrieval Client is a service worker that fulfills [CID](https://docs.ipfs.io/concepts/content-addressing/) requests with [CAR files](https://ipld.io/specs/transport/car/carv1/). CAR files are verifiable, which is
+The Saturn Browser Client is a service worker that serves websites' [CID](https://docs.ipfs.io/concepts/content-addressing/) requests with [CAR files](https://ipld.io/specs/transport/car/carv1/). CAR files are verifiable, which is
 a requirement when retrieving content in a trustless manner from community hosted
 [Saturn Nodes](https://github.com/filecoin-project/saturn-node).
 
@@ -15,7 +15,7 @@ a requirement when retrieving content in a trustless manner from community hoste
 
 `$ npm run dev`
 
-## Adding the Retrieval Client to your website
+## Adding the Browser Client to your website
 
 1. Add this script tag to the `<head>` tag. This will install the service worker.
 
