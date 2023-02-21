@@ -169,7 +169,7 @@ export class Interceptor {
         return new TransformStream({
             transform (chunk, controller) {
                 if (self.log.ttfbMs === null) {
-                    self.log.ttfbMs = new Date() - self.log.localTime
+                    self.log.ttfbMs = new Date() - self.log.startTime
                 }
                 self.log.numBytesSent += chunk.length
 
@@ -203,7 +203,7 @@ export class Interceptor {
         if (this.isLogQueued) { return }
         this.isLogQueued = true
 
-        this.log.requestDuration = (new Date() - this.log.localTime) / 1000
+        this.log.requestDuration = (new Date() - this.log.startTime) / 1000
 
         reporter.add(this.log)
     }
@@ -248,7 +248,7 @@ function createLog (saturnUrl) {
         nodeId: null,
         cacheHit: false,
         url: saturnUrl,
-        localTime: new Date(),
+        startTime: new Date(),
         numBytesSent: null,
         range: null,
         requestDuration: null,
