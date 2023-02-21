@@ -203,7 +203,7 @@ export class Interceptor {
         if (this.isLogQueued) { return }
         this.isLogQueued = true
 
-        this.log.requestDuration = (new Date() - this.log.startTime) / 1000
+        this.log.requestDurationSec = (new Date() - this.log.startTime) / 1000
 
         reporter.add(this.log)
     }
@@ -251,7 +251,7 @@ function createLog (saturnUrl) {
         startTime: new Date(),
         numBytesSent: null,
         range: null,
-        requestDuration: null,
+        requestDurationSec: null,
         requestId: null,
         httpStatusCode: null,
         httpProtocol: null,
