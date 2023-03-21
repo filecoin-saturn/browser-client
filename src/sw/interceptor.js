@@ -34,7 +34,7 @@ export class Interceptor {
     async fetch () {
         let response
         try {
-            response = await wfetch(this.saturnUrl, { timeout: 2_000 })
+            response = await wfetch(this.saturnUrl, { timeout: 10_000 })
         } catch (err) {
             // TODO: Handle abort error from the 2s timeout
             if (err.response) {
