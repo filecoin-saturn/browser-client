@@ -5,7 +5,7 @@ import { recursive as unixFsExporter } from 'ipfs-unixfs-exporter'
 
 import { wfetch, mergeAsyncIterables, sleep } from '@/utils.js'
 import { IdbAsyncBlockStore } from './idb-async-blockstore.js'
-import { verifyBlock, isVerifiableRequest } from './verify.js'
+import { verifyBlock } from './verify.js'
 import { reporter } from './reporter.js'
 
 const debug = createDebug('sw')
@@ -84,7 +84,6 @@ export class Interceptor {
     async _streamFromNode (response, controller) {
         const start = Date.now()
         const blockstore = new IdbAsyncBlockStore()
-        const isVerifiable = isVerifiableRequest(this.saturnUrl.pathname)
         const readable = response.body.pipeThrough(this._logStream())
         let blockIndex = 0
 
@@ -93,7 +92,7 @@ export class Interceptor {
                 if (data.cid && data.bytes) {
                     const { cid, bytes } = data
                     // CAR files will have the root CID as the first block.
-                    if (blockIndex === 0 && isVerifiable) {
+                    if (blockIndex === 0) {
                         this._ensureBlockCidMatchesUrlCid(cid.toString())
                     }
 
@@ -135,7 +134,6 @@ export class Interceptor {
     async * fileChunkItr (exporter) {
         for await (const data of exporter) {
             if (data.type === 'directory') { continue }
-            // Add byte offsets here?
             const opts = {}
             for await (const chunk of data.content(opts)) {
                 yield chunk
@@ -231,10 +229,6 @@ function createSaturnUrl (url, cid, clientId) {
         // https://<cid>.ipfs.dweb.link/cat.png -> https://strn.pl/ipfs/<cid>/cat.png
         const url = L1_ORIGIN + '/ipfs/' + cid + pathname + search
         saturnUrl = new URL(url)
-    }
-
-    if (!isVerifiableRequest(saturnUrl.pathname)) {
-        saturnUrl.hostname = TRUSTED_L1_HOSTNAME
     }
 
     saturnUrl.searchParams.set('clientId', clientId)
