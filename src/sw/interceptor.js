@@ -1,7 +1,7 @@
 import { CarBlockIterator } from '@ipld/car/iterator'
 import toIterable from 'browser-readablestream-to-it'
 import createDebug from 'debug'
-import { recursive as unixFsExporter } from 'ipfs-unixfs-exporter'
+import { recursive } from 'ipfs-unixfs-exporter'
 
 import { wfetch, mergeAsyncIterables, sleep } from '@/utils.js'
 import { IdbAsyncBlockStore } from './idb-async-blockstore.js'
@@ -89,7 +89,8 @@ export class Interceptor {
 
         try {
             for await (const data of this._unpackCarFile(readable, blockstore)) {
-                if (data.cid && data.bytes) {
+                const isCarBlock = data.cid && data.bytes
+                if (isCarBlock) {
                     const { cid, bytes } = data
                     // CAR files will have the root CID as the first block.
                     if (blockIndex === 0) {
@@ -118,12 +119,8 @@ export class Interceptor {
     // Modified from https://github.com/web3-storage/ipfs-car/blob/9cd28ad5f6f320f2e1e15635e479a8c9beb7d916/src/unpack/index.ts#L26
     async * _unpackCarFile (readable, blockstore) {
         const carItr = await CarBlockIterator.fromIterable(asAsyncIterable(readable))
-
-        // Shouldn't there only be 1 root?
-        const roots = await carItr.getRoots()
-        const rootCid = roots[0]
-
-        const chunkItr = this.fileChunkItr(unixFsExporter(rootCid, blockstore))
+        const cidPath = this.saturnUrl.pathname.replace('/ipfs/', '')
+        const chunkItr = this.fileChunkItr(recursive(cidPath, blockstore))
 
         // Merging these 2 iterators makes it easier to exit the async context
         // if a verify error - or any error - occurs. Otherwise there'll be
