@@ -174,12 +174,6 @@ export class Interceptor {
     }
 
     _ensureBlockCidMatchesUrlCid (blockCid) {
-        const { destination } = this.event.request
-        // CAR files for range requests won't contain the url cid..right?
-        if (['video', 'audio'].includes(destination)) {
-            return
-        }
-
         if (blockCid !== this.cid) {
             const msg = 'block cid doesnt match URL cid. ' +
                 `blockCid=${blockCid} urlCid=${this.cid}`
