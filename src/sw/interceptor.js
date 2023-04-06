@@ -14,15 +14,26 @@ const cl = console.log
 const TRUSTED_L1_HOSTNAME = process.env.TRUSTED_L1_ORIGIN.replace('https://', '')
 
 export class Interceptor {
+    static nocache = false // request/response skips L1 cache entirely
+    static bypasscache = false // request skips L1 cache, response gets cached.
+
     constructor (cid, clientId, event) {
         this.cid = cid
         this.clientId = clientId
         this.event = event
         this.numBytesEnqueued = 0
         this.isClosed = false
-        this.saturnUrl = createSaturnUrl(event.request.url, cid, clientId)
-        this.log = createLog(this.saturnUrl)
         this.isLogQueued = false
+
+        const saturnUrl = createSaturnUrl(event.request.url, cid, clientId)
+        if (Interceptor.nocache) {
+            saturnUrl.searchParams.set('nocache', '1')
+        }
+        if (Interceptor.bypasscache) {
+            saturnUrl.searchParams.set('cachebypass', '1')
+        }
+        this.saturnUrl = saturnUrl
+        this.log = createLog(saturnUrl)
     }
 
     // TODO: How to handle response headers?

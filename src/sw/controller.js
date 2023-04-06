@@ -132,10 +132,11 @@ function meetsInterceptionPreconditions (event) {
 
 function checkURLFlagsOnNavigation (url) {
     const { searchParams } = new URL(url)
-    const swDebugFlag = 'swDebug'
-
-    if (searchParams.has(swDebugFlag)) {
+    if (searchParams.get('swDebug') === '1') {
         createDebug.enable('sw')
         debug(`Enabling debug. gitHash: ${process.env.COMMITHASH}`)
     }
+    
+    Interceptor.nocache = searchParams.get('nocache') === '1'
+    Interceptor.bypasscache = searchParams.get('cachebypass') === '1'
 }
