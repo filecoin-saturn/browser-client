@@ -1,4 +1,4 @@
-name: Production CI/CD
+name: CI
 on:
   push:
     branches:
@@ -28,12 +28,14 @@ jobs:
           npm run build
 
       - uses: EndBug/add-and-commit@v9
+        if: github.ref_type == 'tag'
         with:
           add: 'dist'
           default_author: user_info
           message: 'auto build'
 
       - name: Trigger ./dist/* file replication in filecoin-saturn/homepage repo
+        if: github.ref_type == 'tag'
         run: |
           curl \
           -X POST \
