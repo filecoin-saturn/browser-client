@@ -1,44 +1,37 @@
 name: Production CI/CD
 on:
   push:
-    tags:
-      - production/*
+    branches:
+      - "main"
+    tags: ["*"]
 env:
-  # How to sync these vars with other repos?
-  AWS_ACCESS_KEY_ID: ${{ secrets.PROD_GITHUB_CI_AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_GITHUB_CI_AWS_SECRET_ACCESS_KEY }}
-  AWS_ACCOUNT_ID: ${{ secrets.PROD_AWS_ACCOUNT_NUMBER }}
-  AWS_REGION: us-west-2
   ROOT_DOMAIN: strn.pl
-  PUBLIC_BUCKET: filecoin-saturn
 jobs:
   cicd:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
-      # - uses: actions/setup-node@v2
-      #   with:
-      #     node-version: '16'
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
 
-      # - name: Configure AWS Credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-region: ${{env.AWS_REGION}}
+      - name: Build and Commit
+        env:
+          STATIC_ORIGIN: https://strn.network
+          L1_ORIGIN: https://l1s.strn.pl
+          TRUSTED_L1_ORIGIN: https://strn.pl
+          UNTRUSTED_L1_ORIGIN: https://rings.strn.pl
+          LOG_INGESTOR_URL: https://twb3qukm2i654i3tnvx36char40aymqq.lambda-url.us-west-2.on.aws
+        run: |
+          npm ci
+          npm run build
 
-      # - name: Build and Push Assets
-      #   env:
-      #     STATIC_ORIGIN: https://strn.network
-      #     L1_ORIGIN: https://strn.pl
-      #     TRUSTED_L1_ORIGIN: https://core.strn.pl
-      #     UNTRUSTED_L1_ORIGIN: https://rings.strn.pl
-      #     LOG_INGESTOR_URL: https://twb3qukm2i654i3tnvx36char40aymqq.lambda-url.us-west-2.on.aws
-      #   run: |
-      #     npm ci
-      #     npm run build
-
-      #     aws s3 cp dist/ s3://$PUBLIC_BUCKET --recursive \
-      #       --cache-control "public, max-age=3600" --only-show-errors
+      - uses: EndBug/add-and-commit@v9
+        with:
+          add: 'dist'
+          default_author: user_info
+          message: 'auto build'
 
       - name: Trigger ./dist/* file replication in filecoin-saturn/homepage repo
         run: |
