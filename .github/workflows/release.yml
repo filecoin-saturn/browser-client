@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Build and Commit
+      - name: Build
         env:
           STATIC_ORIGIN: https://strn.network
           L1_ORIGIN: https://l1s.strn.pl
