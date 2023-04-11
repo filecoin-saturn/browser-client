@@ -20,12 +20,12 @@ a requirement when retrieving content in a trustless manner from community hoste
 1. Add this script tag to the `<head>` tag. This will install the service worker.
 
 ```html
-<script async src="https://strn.network/widget.js">
+<script async src="https://saturn.tech/widget.js">
 ```
 
 2. Host the service worker file from the root path of your website's domain. For example, if your website is https://example.com, host the service worker file at https://example.com/saturn-sw.js.
 
-    The service worker file can be found here: https://strn.network/saturn-sw.js
+   The service worker file can be found here: https://saturn.tech/saturn-sw.js
 
 
 ## License

@@ -14,11 +14,11 @@ jobs:
 
       - uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: "16"
 
       - name: Build
         env:
-          STATIC_ORIGIN: https://strn.network
+          STATIC_ORIGIN: https://saturn.tech
           L1_ORIGIN: https://l1s.strn.pl
           TRUSTED_L1_ORIGIN: https://strn.pl
           UNTRUSTED_L1_ORIGIN: https://rings.strn.pl
@@ -30,9 +30,9 @@ jobs:
       - uses: EndBug/add-and-commit@v9
         if: github.ref_type == 'tag'
         with:
-          add: 'dist'
+          add: "dist"
           default_author: user_info
-          message: 'CI Build'
+          message: "CI Build"
           push: origin HEAD:main
 
       - name: Trigger ./dist/* file replication in filecoin-saturn/homepage repo
