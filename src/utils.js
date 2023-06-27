@@ -83,3 +83,10 @@ export async function * mergeAsyncIterables (...gens) {
         }
     }
 }
+
+export class CARValidationError extends Error {
+    constructor(message) {
+        super(message)
+        this.name = 'CARValidationError'
+    }
+}
