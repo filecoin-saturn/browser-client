@@ -19,9 +19,9 @@ jobs:
       - name: Build
         env:
           STATIC_ORIGIN: https://saturn.tech
-          L1_ORIGIN: https://l1s.strn.pl
-          TRUSTED_L1_ORIGIN: https://strn.pl
-          UNTRUSTED_L1_ORIGIN: https://rings.strn.pl
+          L1_ORIGIN: https://l1s.saturn.ms
+          TRUSTED_L1_ORIGIN: https://saturn.ms
+          UNTRUSTED_L1_ORIGIN: https://l1s.saturn.ms
           LOG_INGESTOR_URL: https://twb3qukm2i654i3tnvx36char40aymqq.lambda-url.us-west-2.on.aws
         run: |
           npm ci
