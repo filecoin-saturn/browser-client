@@ -235,7 +235,7 @@ function createSaturnUrl (url, cid, clientId) {
 
     saturnUrl.searchParams.set('clientId', clientId)
     saturnUrl.searchParams.set('format', 'car')
-    saturnUrl.searchParams.set('car-scope', 'file')
+    saturnUrl.searchParams.set('dag-scope', 'entity')
 
     return saturnUrl
 }
