@@ -1,5 +1,6 @@
 import createDebug from 'debug'
 import isIPFS from 'is-ipfs'
+import Saturn from 'strn'
 import { v4 as uuidv4 } from 'uuid'
 
 import { Interceptor } from './interceptor.js'
@@ -18,6 +19,7 @@ export class Controller {
 
     constructor () {
         this.clientId = getRetrievalClientId()
+        this.saturn = new Saturn()
     }
 
     start () {
@@ -38,7 +40,7 @@ export class Controller {
 
             if (cid) {
                 debug('cid', cid, url)
-                event.respondWith(fetchCID(cid, this.clientId, event))
+                event.respondWith(fetchCID(cid, this.saturn, this.clientId, event))
             }
         })
     }
@@ -72,12 +74,12 @@ function findCID (url) {
     return null
 }
 
-async function fetchCID (cid, clientId, event) {
+async function fetchCID (cid, saturn, clientId, event) {
     let response = null
     const { request } = event
 
     try {
-        const interceptor = new Interceptor(cid, clientId, event)
+        const interceptor = new Interceptor(cid, saturn, clientId, event)
         response = await interceptor.fetch()
     } catch (err) {
         debug(`${request.url}: fetchCID err %O`, err)
@@ -136,7 +138,7 @@ function checkURLFlagsOnNavigation (url) {
         createDebug.enable('sw')
         debug(`Enabling debug. gitHash: ${process.env.COMMITHASH}`)
     }
-    
+
     Interceptor.nocache = searchParams.get('nocache') === '1'
     Interceptor.bypasscache = searchParams.get('cachebypass') === '1'
 }

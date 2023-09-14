@@ -26,17 +26,11 @@
     "webpack-dev-server": "^4.7.4"
   },
   "dependencies": {
-    "@ipld/car": "^3.2.3",
-    "@ipld/dag-cbor": "^7.0.1",
-    "@ipld/dag-json": "^8.0.8",
-    "@ipld/dag-pb": "^2.1.16",
-    "@multiformats/blake2": "^1.0.9",
     "browser-readablestream-to-it": "^1.0.3",
     "debug": "^4.3.3",
-    "ipfs-car": "^0.6.2",
-    "ipfs-unixfs-exporter": "^7.0.6",
     "is-ipfs": "^6.0.2",
     "multiformats": "^9.6.4",
+    "strn": "^0.0.4",
     "uuid": "^8.3.2"
   }
 }
