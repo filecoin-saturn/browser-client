@@ -112,7 +112,7 @@ function getCidPathFromURL(url, cid) {
     if (pathname.startsWith('/ipfs/')) {
         cidPath = pathname.replace('/ipfs/', '')
     } else if (hostname.includes(cid)) {
-    // https://<cid>.ipfs.dweb.link/cat.png -> https://strn.pl/ipfs/<cid>/cat.png
+    // https://<cid>.ipfs.dweb.link/cat.png -> https://saturn.ms/ipfs/<cid>/cat.png
         cidPath = cid + pathname
     }
 
