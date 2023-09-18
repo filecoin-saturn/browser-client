@@ -1,5 +1,6 @@
 import toIterable from 'browser-readablestream-to-it'
 import createDebug from 'debug'
+import * as Sentry from '@sentry/browser'
 
 const debug = createDebug('sw')
 const cl = console.log
@@ -40,6 +41,7 @@ export class Interceptor {
                     await self._streamContent(contentItr, controller)
                 } catch (err) {
                     self._debug('Error', err)
+                    Sentry.captureException(err)
                     self._streamFromOrigin(controller)
                 }
             },

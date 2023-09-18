@@ -5,6 +5,10 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { Interceptor } from './interceptor.js'
 
+const FILTERED_HOSTS = [
+    'images.studio.metaplex.com',
+]
+
 const debug = createDebug('sw')
 const cl = console.log
 
@@ -100,6 +104,10 @@ function meetsInterceptionPreconditions (event) {
             return false
         }
 
+        if (matchFilteredHosts(new URL(url).hostname)) {
+            return false
+        }
+
         // range requests not supported yet.
         const isStreamingMedia = ['video', 'audio'].includes(destination)
         // HLS works fine, no range requests involved.
@@ -141,4 +149,8 @@ function checkURLFlagsOnNavigation (url) {
 
     Interceptor.nocache = searchParams.get('nocache') === '1'
     Interceptor.bypasscache = searchParams.get('cachebypass') === '1'
+}
+
+function matchFilteredHosts(hostname) {
+    return FILTERED_HOSTS.some(host => hostname === host)
 }
