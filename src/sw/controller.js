@@ -2,6 +2,7 @@ import createDebug from 'debug'
 import isIPFS from 'is-ipfs'
 import Saturn from 'strn'
 import { v4 as uuidv4 } from 'uuid'
+import * as Sentry from '@sentry/browser'
 
 import { Interceptor } from './interceptor.js'
 
@@ -87,6 +88,7 @@ async function fetchCID (cid, saturn, clientId, event) {
         response = await interceptor.fetch()
     } catch (err) {
         debug(`${request.url}: fetchCID err %O`, err)
+        Sentry.captureException(err)
         response = await fetch(request)
     }
 
