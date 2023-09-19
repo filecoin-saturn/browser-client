@@ -2,8 +2,13 @@ import createDebug from 'debug'
 import isIPFS from 'is-ipfs'
 import Saturn from 'strn'
 import { v4 as uuidv4 } from 'uuid'
+import * as Sentry from '@sentry/browser'
 
 import { Interceptor } from './interceptor.js'
+
+const FILTERED_HOSTS = [
+    'images.studio.metaplex.com',
+]
 
 const debug = createDebug('sw')
 const cl = console.log
@@ -83,6 +88,7 @@ async function fetchCID (cid, saturn, clientId, event) {
         response = await interceptor.fetch()
     } catch (err) {
         debug(`${request.url}: fetchCID err %O`, err)
+        Sentry.captureException(err)
         response = await fetch(request)
     }
 
@@ -97,6 +103,10 @@ function meetsInterceptionPreconditions (event) {
 
         if (isNavigation) {
             checkURLFlagsOnNavigation(url)
+            return false
+        }
+
+        if (matchFilteredHosts(new URL(url).hostname)) {
             return false
         }
 
@@ -141,4 +151,8 @@ function checkURLFlagsOnNavigation (url) {
 
     Interceptor.nocache = searchParams.get('nocache') === '1'
     Interceptor.bypasscache = searchParams.get('cachebypass') === '1'
+}
+
+function matchFilteredHosts(hostname) {
+    return FILTERED_HOSTS.some(host => hostname === host)
 }

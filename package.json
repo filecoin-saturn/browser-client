@@ -26,6 +26,7 @@
     "webpack-dev-server": "^4.7.4"
   },
   "dependencies": {
+    "@sentry/browser": "^7.69.0",
     "browser-readablestream-to-it": "^1.0.3",
     "debug": "^4.3.3",
     "is-ipfs": "^6.0.2",
