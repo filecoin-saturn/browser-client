@@ -26,12 +26,12 @@
     "webpack-dev-server": "^4.7.4"
   },
   "dependencies": {
+    "@filecoin-saturn/js-client": "^0.0.8",
     "@sentry/browser": "^7.69.0",
     "browser-readablestream-to-it": "^1.0.3",
     "debug": "^4.3.3",
     "is-ipfs": "^6.0.2",
     "multiformats": "^9.6.4",
-    "strn": "^0.0.7",
     "uuid": "^8.3.2"
   }
 }
