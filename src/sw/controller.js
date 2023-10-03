@@ -1,6 +1,6 @@
 import createDebug from 'debug'
 import isIPFS from 'is-ipfs'
-import Saturn from 'strn'
+import Saturn from '@filecoin-saturn/js-client'
 import { v4 as uuidv4 } from 'uuid'
 import * as Sentry from '@sentry/browser'
 
