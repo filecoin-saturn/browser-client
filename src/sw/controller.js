@@ -1,6 +1,6 @@
 import createDebug from 'debug'
 import isIPFS from 'is-ipfs'
-import Saturn from '@filecoin-saturn/js-client'
+import { Saturn, indexedDbStorage } from '@filecoin-saturn/js-client'
 import { v4 as uuidv4 } from 'uuid'
 import * as Sentry from '@sentry/browser'
 
@@ -24,7 +24,10 @@ export class Controller {
 
     constructor () {
         this.clientId = getRetrievalClientId()
-        this.saturn = new Saturn()
+        this.saturn = new Saturn({
+            clientKey: 'abc123',
+            storage: indexedDbStorage()
+        })
     }
 
     start () {
