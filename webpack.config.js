@@ -20,9 +20,9 @@ export default (env, { mode }) => {
     // Switch to .env files once this gets unwieldy
     const e = process.env
     const STATIC_ORIGIN = e.STATIC_ORIGIN ?? 'http://localhost:8030'
-    const L1_ORIGIN = e.L1_ORIGIN ?? 'https://l1s.saturn.pl'
-    const TRUSTED_L1_ORIGIN = e.TRUSTED_L1_ORIGIN ?? 'https://l1s.saturn.pl'
-    const UNTRUSTED_L1_ORIGIN = e.UNTRUSTED_L1_ORIGIN ?? 'https://l1s.saturn.pl'
+    const L1_ORIGIN = e.L1_ORIGIN ?? 'https://l1s.saturn-test.ms'
+    const TRUSTED_L1_ORIGIN = e.TRUSTED_L1_ORIGIN ?? 'https://l1s.saturn-test.ms'
+    const UNTRUSTED_L1_ORIGIN = e.UNTRUSTED_L1_ORIGIN ?? 'https://saturn-test.ms'
     const LOG_INGESTOR_URL = e.LOG_INGESTOR_URL ?? 'https://p6wofrb2zgwrf26mcxjpprivie0lshfx.lambda-url.us-west-2.on.aws'
     const JWT_AUTH_URL = e.JWT_AUTH_URL ?? 'https://fz3dyeyxmebszwhuiky7vggmsu0rlkoy.lambda-url.us-west-2.on.aws'
     const ORCHESTRATOR_URL = e.ORCHESTRATOR_URL ?? 'https://orchestrator.strn-test.pl/nodes'
