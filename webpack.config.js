@@ -20,10 +20,13 @@ export default (env, { mode }) => {
     // Switch to .env files once this gets unwieldy
     const e = process.env
     const STATIC_ORIGIN = e.STATIC_ORIGIN ?? 'http://localhost:8030'
-    const L1_ORIGIN = e.L1_ORIGIN ?? 'http://localhost:8031'
-    const TRUSTED_L1_ORIGIN = e.TRUSTED_L1_ORIGIN ?? 'http://localhost:8031'
-    const UNTRUSTED_L1_ORIGIN = e.UNTRUSTED_L1_ORIGIN ?? 'https://localhost'
+    const L1_ORIGIN = e.L1_ORIGIN ?? 'https://l1s.saturn.pl'
+    const TRUSTED_L1_ORIGIN = e.TRUSTED_L1_ORIGIN ?? 'https://l1s.saturn.pl'
+    const UNTRUSTED_L1_ORIGIN = e.UNTRUSTED_L1_ORIGIN ?? 'https://l1s.saturn.pl'
     const LOG_INGESTOR_URL = e.LOG_INGESTOR_URL ?? 'https://p6wofrb2zgwrf26mcxjpprivie0lshfx.lambda-url.us-west-2.on.aws'
+    const JWT_AUTH_URL = e.JWT_AUTH_URL ?? 'https://fz3dyeyxmebszwhuiky7vggmsu0rlkoy.lambda-url.us-west-2.on.aws'
+    const ORCHESTRATOR_URL = e.ORCHESTRATOR_URL ?? 'https://orchestrator.strn-test.pl/nodes'
+
 
 
     return {
@@ -59,6 +62,8 @@ export default (env, { mode }) => {
                 TRUSTED_L1_ORIGIN,
                 UNTRUSTED_L1_ORIGIN,
                 LOG_INGESTOR_URL,
+                JWT_AUTH_URL,
+                ORCHESTRATOR_URL
             }),
             new ESLintPlugin({
                 emitError: false,
@@ -75,6 +80,7 @@ export default (env, { mode }) => {
                 '@': abspath('src'),
                 '@sw': abspath('src/sw'),
                 '@widget': abspath('src/widget'),
+                // process: 'process/browser',
             }
         }
     }
