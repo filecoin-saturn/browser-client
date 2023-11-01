@@ -1,10 +1,10 @@
 import createDebug from 'debug'
-import isIPFS from 'is-ipfs'
 import { Saturn, indexedDbStorage } from '@filecoin-saturn/js-client'
 import { v4 as uuidv4 } from 'uuid'
 import * as Sentry from '@sentry/browser'
 
 import { Interceptor } from './interceptor.js'
+import { findCIDInURL } from '../utils.js'
 
 const FILTERED_HOSTS = [
     'images.studio.metaplex.com',
@@ -43,8 +43,7 @@ export class Controller {
             }
 
             const { url } = event.request
-            // TODO: Check for ipns too?
-            const cid = findCID(url)
+            const cid = findCIDInURL(url)
 
             if (cid) {
                 debug('cid', cid, url)
@@ -64,22 +63,6 @@ function getRetrievalClientId () {
         clientId = uuidv4()
     }
     return clientId
-}
-
-// Modified from https://github.com/PinataCloud/ipfs-gateway-tools/blob/34533f3d5f3c0dd616327e2e5443072c27ea569d/src/index.js#L6
-function findCID (url) {
-    const splitUrl = url.split('?')[0].split('/')
-    for (const split of splitUrl) {
-        if (isIPFS.cid(split)) {
-            return split
-        }
-        const splitOnDot = split.split('.')[0]
-        if(isIPFS.cid(splitOnDot)) {
-            return splitOnDot
-        }
-    }
-
-    return null
 }
 
 async function fetchCID (cid, saturn, clientId, event) {

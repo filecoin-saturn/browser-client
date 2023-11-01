@@ -2,6 +2,8 @@ import toIterable from 'browser-readablestream-to-it'
 import createDebug from 'debug'
 import * as Sentry from '@sentry/browser'
 
+import { getCidPathFromURL } from '../utils.js'
+
 const debug = createDebug('sw')
 const cl = console.log
 
@@ -105,20 +107,6 @@ export class Interceptor {
     _debug(...args) {
         debug(this.event.request.url, ...args)
     }
-}
-
-function getCidPathFromURL(url, cid) {
-    const { hostname, pathname } = new URL(url)
-    let cidPath
-
-    if (pathname.startsWith('/ipfs/')) {
-        cidPath = pathname.replace('/ipfs/', '')
-    } else if (hostname.includes(cid)) {
-    // https://<cid>.ipfs.dweb.link/cat.png -> https://saturn.ms/ipfs/<cid>/cat.png
-        cidPath = cid + pathname
-    }
-
-    return cidPath
 }
 
 function asAsyncIterable(readable) {
