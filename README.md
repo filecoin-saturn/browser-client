@@ -5,7 +5,7 @@
 
 The Saturn Browser Client is a service worker that serves websites' [CID](https://docs.ipfs.io/concepts/content-addressing/) requests with [CAR files](https://ipld.io/specs/transport/car/carv1/). CAR files are verifiable, which is
 a requirement when retrieving content in a trustless manner from community hosted
-[Saturn Nodes](https://github.com/filecoin-project/saturn-node).
+[Saturn Nodes](https://github.com/filecoin-project/L1-node).
 
 ## Install
 
