@@ -72,7 +72,7 @@ export default (env, { mode }) => {
         ],
         resolve: {
             alias: {
-                '@': abspath('src'),
+                '@src': abspath('src'),
                 '@sw': abspath('src/sw'),
                 '@widget': abspath('src/widget'),
             }
