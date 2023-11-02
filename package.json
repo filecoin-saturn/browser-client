@@ -6,7 +6,7 @@
   "scripts": {
     "test": "NODE_ENV=development TESTING=true node --test test/",
     "dev": "webpack serve --mode=development",
-    "node": "npx nodemon placeholders/mock-node.js",
+    "node": "npx nodemon public/mock-node.js",
     "build": "webpack --mode=production"
   },
   "author": "",

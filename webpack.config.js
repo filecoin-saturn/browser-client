@@ -73,7 +73,7 @@ export default (env, { mode }) => {
             }),
             new HtmlWebpackPlugin({
                 filename: 'index.html',
-                template: abspath('placeholders/index.html'),
+                template: abspath('public/index.html'),
                 // chunks = [] disables script injection, the script tag is
                 // already present in the html template with an absolute url
                 chunks: [],
