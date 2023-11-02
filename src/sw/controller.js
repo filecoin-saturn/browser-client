@@ -27,12 +27,7 @@ export class Controller {
         this.clientKey = getClientKey()
         this.saturn = new Saturn({
             clientKey: this.clientKey,
-            storage: indexedDbStorage(),
-            authURL: 'https://fz3dyeyxmebszwhuiky7vggmsu0rlkoy.lambda-url.us-west-2.on.aws',
-            orchURL: 'https://orchestrator.strn.pl/nodes',
-            cdnURL: 'https://l1s.saturn.ms',
-            originURL: 'djib.io',
-            experimental: true
+            storage: indexedDbStorage()
         })
 
     }
@@ -75,6 +70,7 @@ function getRetrievalClientId () {
 function getClientKey() {
     const urlObj = new URL(self.location.href)
     const clientKey = urlObj.searchParams.get('clientKey')
+    console.log('cleint key', clientKey)
     return clientKey
 }
 
