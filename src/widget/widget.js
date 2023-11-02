@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import { SW_PATH } from '@/constants.js'
+import { SW_PATH } from '@src/constants.js'
 import { widgetConfigFromScriptTag } from './widget-config.js'
 
 const cl = console.log
@@ -53,7 +53,6 @@ function initWidget () {
     if (!('serviceWorker' in navigator)) {
         return
     }
-
 
     const config = widgetConfigFromScriptTag()
     const clientKey = config.clientKey

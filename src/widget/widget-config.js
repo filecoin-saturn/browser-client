@@ -2,9 +2,8 @@
 // Retrieves widget config based on the script tag url.
 
 export const WIDGET_BASE_URL = `${process.env.WIDGET_ORIGIN}/widget.js`
-// The ".js" extension is omitted so the HTTP request can bypass
-// the wordpress web server.
-export const REVERSE_PROXY_WIDGET_PATH = '/arc-widget'
+
+const CLIENT_KEY_IDENTIFIER = 'integration'
 
 export function isWidgetUrl (url) {
     const { href } = new URL(url)
@@ -14,7 +13,7 @@ export function isWidgetUrl (url) {
 function getConf (urlObj, conf = {}) {
     const [_, queryStr] = urlObj.href.split(/#|[?]/)
     const searchParams = new URLSearchParams(queryStr)
-    conf.clientKey = searchParams.get('target')
+    conf.clientKey = searchParams.get(CLIENT_KEY_IDENTIFIER)
     return conf
 }
 
