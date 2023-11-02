@@ -57,7 +57,6 @@ function initWidget () {
 
     const config = widgetConfigFromScriptTag()
     const clientKey = config.clientKey
-    console.log('CONFIG', config)
     addHeadElement('link', {
         href: process.env.UNTRUSTED_L1_ORIGIN,
         crossOrigin: '',
