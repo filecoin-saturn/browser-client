@@ -16,6 +16,8 @@ const __dirname = fileURLToPath(path.dirname(import.meta.url))
 const abspath = p => path.resolve(__dirname, p)
 const cl = console.log
 
+const devServerPort = 8030
+
 export default (env, { mode }) => {
     // Switch to .env files once this gets unwieldy
     const e = process.env
@@ -26,11 +28,10 @@ export default (env, { mode }) => {
     const LOG_INGESTOR_URL = e.LOG_INGESTOR_URL ?? 'https://p6wofrb2zgwrf26mcxjpprivie0lshfx.lambda-url.us-west-2.on.aws'
     const JWT_AUTH_URL = e.JWT_AUTH_URL ?? 'https://fz3dyeyxmebszwhuiky7vggmsu0rlkoy.lambda-url.us-west-2.on.aws'
     const ORCHESTRATOR_URL = e.ORCHESTRATOR_URL ?? 'https://orchestrator.strn-test.pl/nodes'
-    const WIDGET_ORIGIN = e.WIDGET_ORIGIN ?? 'https://saturn.test'
-
+    const WIDGET_ORIGIN = e.WIDGET_ORIGIN ?? `http://localhost:${8030}`
 
     return {
-        // Uncomment snapshot for webpack to detect edits in node_modules/
+    // Uncomment snapshot for webpack to detect edits in node_modules/
         snapshot: {
             managedPaths: [],
         },
@@ -44,7 +45,7 @@ export default (env, { mode }) => {
                 logging: 'warn'
             },
             static: abspath('dist'),
-            port: 8030,
+            port: devServerPort,
             // hot: false,
             // liveReload: false,
             webSocketServer: false
@@ -73,7 +74,14 @@ export default (env, { mode }) => {
             new HtmlWebpackPlugin({
                 filename: 'index.html',
                 template: abspath('placeholders/index.html'),
-                chunks: ['widget']
+                // chunks = [] disables script injection, the script tag is
+                // already present in the html template with an absolute url
+                chunks: [],
+                templateParameters: {
+                    // Arc prod client key
+                    CLIENT_KEY: '1205a0fe-142c-40a2-a830-8bbaf6382c3f',
+                    WIDGET_ORIGIN,
+                }
             })
         ],
         resolve: {

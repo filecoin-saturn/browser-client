@@ -64,7 +64,7 @@ function initWidget () {
     })
 
     const clientId = getRetrievalClientId()
-    const conf = { clientId, clientKey}
+    const conf = { clientId, clientKey }
     installSw(conf)
 }
 
