@@ -70,7 +70,6 @@ function getRetrievalClientId () {
 function getClientKey() {
     const urlObj = new URL(self.location.href)
     const clientKey = urlObj.searchParams.get('clientKey')
-    console.log('cleint key', clientKey)
     return clientKey
 }
 
