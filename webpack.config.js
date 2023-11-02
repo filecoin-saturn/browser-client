@@ -26,7 +26,7 @@ export default (env, { mode }) => {
     const LOG_INGESTOR_URL = e.LOG_INGESTOR_URL ?? 'https://p6wofrb2zgwrf26mcxjpprivie0lshfx.lambda-url.us-west-2.on.aws'
     const JWT_AUTH_URL = e.JWT_AUTH_URL ?? 'https://fz3dyeyxmebszwhuiky7vggmsu0rlkoy.lambda-url.us-west-2.on.aws'
     const ORCHESTRATOR_URL = e.ORCHESTRATOR_URL ?? 'https://orchestrator.strn-test.pl/nodes'
-
+    const WIDGET_ORIGIN = e.WIDGET_ORIGIN ?? 'https://saturn.test'
 
 
     return {
@@ -63,7 +63,8 @@ export default (env, { mode }) => {
                 UNTRUSTED_L1_ORIGIN,
                 LOG_INGESTOR_URL,
                 JWT_AUTH_URL,
-                ORCHESTRATOR_URL
+                ORCHESTRATOR_URL,
+                WIDGET_ORIGIN
             }),
             new ESLintPlugin({
                 emitError: false,
@@ -80,7 +81,6 @@ export default (env, { mode }) => {
                 '@': abspath('src'),
                 '@sw': abspath('src/sw'),
                 '@widget': abspath('src/widget'),
-                // process: 'process/browser',
             }
         }
     }

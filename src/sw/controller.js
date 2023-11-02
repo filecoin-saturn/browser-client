@@ -24,10 +24,17 @@ export class Controller {
 
     constructor () {
         this.clientId = getRetrievalClientId()
+        this.clientKey = getClientKey()
         this.saturn = new Saturn({
-            clientKey: 'abc123',
-            storage: indexedDbStorage()
+            clientKey: this.clientKey,
+            storage: indexedDbStorage(),
+            authURL: 'https://fz3dyeyxmebszwhuiky7vggmsu0rlkoy.lambda-url.us-west-2.on.aws',
+            orchURL: 'https://orchestrator.strn.pl/nodes',
+            cdnURL: 'https://l1s.saturn.ms',
+            originURL: 'djib.io',
+            experimental: true
         })
+
     }
 
     start () {
@@ -64,6 +71,12 @@ function getRetrievalClientId () {
         clientId = uuidv4()
     }
     return clientId
+}
+
+function getClientKey() {
+    const urlObj = new URL(self.location.href)
+    const clientKey = urlObj.searchParams.get('clientKey')
+    return clientKey
 }
 
 // Modified from https://github.com/PinataCloud/ipfs-gateway-tools/blob/34533f3d5f3c0dd616327e2e5443072c27ea569d/src/index.js#L6
