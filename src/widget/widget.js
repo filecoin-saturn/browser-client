@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 
 import { SW_PATH } from '@src/constants.js'
+import { widgetConfigFromScriptTag } from './widget-config.js'
 
 const cl = console.log
 
@@ -8,9 +9,10 @@ const MDN_SW_DOCS_URL = 'https://developer.mozilla.org/en-US/docs/Web' +
                         '/API/Service_Worker_API/Using_Service_Workers' +
                         '#Why_is_my_service_worker_failing_to_register'
 
-async function installSw (clientId) {
+async function installSw (conf) {
+    const { clientId, clientKey } = conf
     try {
-        const path = `${SW_PATH}?clientId=${clientId}`
+        const path = `${SW_PATH}?clientId=${clientId}&clientKey=${clientKey}`
         await navigator.serviceWorker.register(path)
     } catch (err) {
         console.warn(
@@ -52,6 +54,8 @@ function initWidget () {
         return
     }
 
+    const config = widgetConfigFromScriptTag()
+    const clientKey = config.clientKey
     addHeadElement('link', {
         href: process.env.UNTRUSTED_L1_ORIGIN,
         crossOrigin: '',
@@ -60,7 +64,8 @@ function initWidget () {
     })
 
     const clientId = getRetrievalClientId()
-    installSw(clientId)
+    const conf = { clientId, clientKey}
+    installSw(conf)
 }
 
 initWidget()

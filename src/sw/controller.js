@@ -24,10 +24,12 @@ export class Controller {
 
     constructor () {
         this.clientId = getRetrievalClientId()
+        this.clientKey = getClientKey()
         this.saturn = new Saturn({
-            clientKey: 'abc123',
+            clientKey: this.clientKey,
             storage: indexedDbStorage()
         })
+
     }
 
     start () {
@@ -63,6 +65,12 @@ function getRetrievalClientId () {
         clientId = uuidv4()
     }
     return clientId
+}
+
+function getClientKey() {
+    const urlObj = new URL(self.location.href)
+    const clientKey = urlObj.searchParams.get('clientKey')
+    return clientKey
 }
 
 async function fetchCID (cid, saturn, clientId, event) {
