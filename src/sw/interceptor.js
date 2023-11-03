@@ -7,11 +7,6 @@ import { getCidPathFromURL } from '../utils.js'
 const debug = createDebug('sw')
 const cl = console.log
 
-const TRUSTED_L1_HOSTNAME = process.env.TRUSTED_L1_ORIGIN.replace(
-    'https://',
-    ''
-)
-
 export class Interceptor {
     static nocache = false // request/response skips L1 cache entirely
     static bypasscache = false // request skips L1 cache, response gets cached.
@@ -24,7 +19,6 @@ export class Interceptor {
         this.event = event
         this.numBytesEnqueued = 0
         this.isClosed = false
-        this.isLogQueued = false
     }
 
     // TODO: How to handle response headers?
@@ -40,11 +34,16 @@ export class Interceptor {
         const readableStream = new ReadableStream({
             async start(controller) {
                 try {
+                    const opts = {
+                        customerFallbackURL: self.event.request.url
+                    }
+                    const contentItr = await self.saturn.fetchContentWithFallback(self.cidPath, opts)
                     await self._streamContent(contentItr, controller)
                 } catch (err) {
                     self._debug('Error', err)
                     Sentry.captureException(err)
-                    self._streamFromOrigin(controller)
+                } finally {
+                    self._close(controller)
                 }
             },
             cancel() {
@@ -63,14 +62,11 @@ export class Interceptor {
                 this._enqueueChunk(controller, data)
             }
         } finally {
-            this._close(controller)
-
             const duration = Date.now() - start
             this._debug(`Done in ${duration}ms. Enqueued ${this.numBytesEnqueued}`)
         }
     }
 
-    // TODO: Need to account for this.numBytesEnqueued with range requests.
     async _streamFromOrigin(controller) {
         this._debug('_streamFromOrigin')
 
@@ -86,8 +82,6 @@ export class Interceptor {
         for await (const chunk of asAsyncIterable(res.body)) {
             this._enqueueChunk(controller, chunk)
         }
-
-        this._close(controller)
     }
 
     _enqueueChunk(controller, chunk) {
