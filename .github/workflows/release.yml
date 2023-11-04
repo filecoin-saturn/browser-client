@@ -39,7 +39,7 @@ jobs:
         with:
           add: "dist"
           default_author: user_info
-          message: "CI Build"
+          message: "[skip ci] CI Build"
           push: origin HEAD:main --force
 
       - name: Trigger ./dist/* file replication in filecoin-saturn/homepage repo
