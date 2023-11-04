@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           # https://github.com/filecoin-saturn-team token to allow force pushing to protected branches
-          token: ${{ secrets.ACCESS_TOKEN }}
+          token: ${{ secrets.FORCE_PUSH_TOKEN }}
 
       - uses: actions/setup-node@v2
         with:
