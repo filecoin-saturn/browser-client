@@ -40,7 +40,7 @@ jobs:
           add: "dist"
           default_author: user_info
           message: "CI Build"
-          push: origin HEAD:main
+          push: origin main --force
 
       - name: Trigger ./dist/* file replication in filecoin-saturn/homepage repo
         if: github.ref_type == 'tag'
