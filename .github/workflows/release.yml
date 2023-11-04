@@ -10,7 +10,10 @@ jobs:
   cicd:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          # https://github.com/filecoin-saturn-team token to allow pushing to protected branches
+          token: ${{ secrets.ACCESS_TOKEN }}
 
       - uses: actions/setup-node@v2
         with:
