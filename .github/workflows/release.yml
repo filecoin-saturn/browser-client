@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # https://github.com/filecoin-saturn-team token to allow pushing to protected branches
+          # https://github.com/filecoin-saturn-team token to allow force pushing to protected branches
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - uses: actions/setup-node@v2
@@ -40,7 +40,7 @@ jobs:
           add: "dist"
           default_author: user_info
           message: "CI Build"
-          push: origin main --force
+          push: origin HEAD:main --force
 
       - name: Trigger ./dist/* file replication in filecoin-saturn/homepage repo
         if: github.ref_type == 'tag'
