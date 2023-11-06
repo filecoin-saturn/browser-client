@@ -27,6 +27,16 @@ a requirement when retrieving content in a trustless manner from community hoste
 
    The service worker file can be found here: https://saturn.tech/saturn-sw.js
 
+## Deployment
+
+- To deploy to staging, push to `main`. Then trigger a staging homepage fleek deploy.
+
+- To deploy to production, push a tag. Then trigger a prod homepage fleek deploy.
+
+```bash
+git tag -m deploy $(date +%s)
+git push --follow-tags
+```
 
 ## License
 

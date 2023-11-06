@@ -1,7 +1,7 @@
 
 // Retrieves widget config based on the script tag url.
 
-export const WIDGET_BASE_URL = `${process.env.WIDGET_ORIGIN}/widget.js`
+export const WIDGET_BASE_URL = `${process.env.STATIC_FILE_ORIGIN}/widget.js`
 
 const CLIENT_KEY_IDENTIFIER = 'integration'
 

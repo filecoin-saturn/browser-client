@@ -57,7 +57,7 @@ function initWidget () {
     const config = widgetConfigFromScriptTag()
     const clientKey = config.clientKey
     addHeadElement('link', {
-        href: process.env.UNTRUSTED_L1_ORIGIN,
+        href: process.env.L1_ORIGIN,
         crossOrigin: '',
         rel: 'preconnect',
         id: 'saturn-preconnect'

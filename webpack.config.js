@@ -21,17 +21,15 @@ const devServerPort = 8030
 export default (env, { mode }) => {
     // Switch to .env files once this gets unwieldy
     const e = process.env
-    const STATIC_ORIGIN = e.STATIC_ORIGIN ?? 'http://localhost:8030'
+    const STATIC_FILE_ORIGIN = e.STATIC_FILE_ORIGIN ?? `http://localhost:${devServerPort}`
     const L1_ORIGIN = e.L1_ORIGIN ?? 'https://l1s.saturn-test.ms'
-    const TRUSTED_L1_ORIGIN = e.TRUSTED_L1_ORIGIN ?? 'https://l1s.saturn-test.ms'
-    const UNTRUSTED_L1_ORIGIN = e.UNTRUSTED_L1_ORIGIN ?? 'https://saturn-test.ms'
+    const TRUSTED_L1_ORIGIN = e.TRUSTED_L1_ORIGIN ?? 'https://saturn-test.ms'
     const LOG_INGESTOR_URL = e.LOG_INGESTOR_URL ?? 'https://p6wofrb2zgwrf26mcxjpprivie0lshfx.lambda-url.us-west-2.on.aws'
     const JWT_AUTH_URL = e.JWT_AUTH_URL ?? 'https://fz3dyeyxmebszwhuiky7vggmsu0rlkoy.lambda-url.us-west-2.on.aws'
-    const ORCHESTRATOR_URL = e.ORCHESTRATOR_URL ?? 'https://orchestrator.strn-test.pl/nodes'
-    const WIDGET_ORIGIN = e.WIDGET_ORIGIN ?? `http://localhost:${8030}`
+    const ORCHESTRATOR_URL = e.ORCHESTRATOR_URL ?? 'https://orchestrator.strn-test.pl/nodes?maxNodes=100'
 
     return {
-    // Uncomment snapshot for webpack to detect edits in node_modules/
+        // Uncomment snapshot for webpack to detect edits in node_modules/
         snapshot: {
             managedPaths: [],
         },
@@ -53,19 +51,17 @@ export default (env, { mode }) => {
         output: {
             path: abspath('dist'),
             clean: true,
-            publicPath: STATIC_ORIGIN + '/',
+            publicPath: STATIC_FILE_ORIGIN + '/',
         },
         plugins: [
             new webpack.EnvironmentPlugin({
                 COMMITHASH: JSON.stringify(gitPlugin.commithash()),
-                STATIC_ORIGIN,
+                STATIC_FILE_ORIGIN,
                 L1_ORIGIN,
                 TRUSTED_L1_ORIGIN,
-                UNTRUSTED_L1_ORIGIN,
                 LOG_INGESTOR_URL,
                 JWT_AUTH_URL,
                 ORCHESTRATOR_URL,
-                WIDGET_ORIGIN
             }),
             new ESLintPlugin({
                 emitError: false,
@@ -80,7 +76,7 @@ export default (env, { mode }) => {
                 templateParameters: {
                     // Arc prod client key
                     CLIENT_KEY: '1205a0fe-142c-40a2-a830-8bbaf6382c3f',
-                    WIDGET_ORIGIN,
+                    STATIC_FILE_ORIGIN,
                 }
             })
         ],

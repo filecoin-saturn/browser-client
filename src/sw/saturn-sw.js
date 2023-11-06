@@ -10,7 +10,7 @@ import {
     DEDICATED_WORKER_PATH
 } from '@src/constants'
 
-const origin = process.env.STATIC_ORIGIN
+const origin = process.env.STATIC_FILE_ORIGIN
 
 if (typeof ServiceWorkerGlobalScope !== 'undefined') {
     const url = origin + SW_CORE_PATH

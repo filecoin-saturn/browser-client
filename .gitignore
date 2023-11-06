@@ -3,5 +3,4 @@
 node_modules
 test-files
 
-# dist folder is watched by homepage git hook.
-dist/index.html
+dist/

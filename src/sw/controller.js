@@ -24,12 +24,14 @@ export class Controller {
 
     constructor () {
         this.clientId = getRetrievalClientId()
-        this.clientKey = getClientKey()
         this.saturn = new Saturn({
-            clientKey: this.clientKey,
+            cdnURL: process.env.L1_ORIGIN,
+            logURL: process.env.LOG_INGESTOR_URL,
+            orchURL: process.env.ORCHESTRATOR_URL,
+            authURL: process.env.JWT_AUTH_URL,
+            clientKey: getClientKey(),
             storage: indexedDbStorage()
         })
-
     }
 
     start () {

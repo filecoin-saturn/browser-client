@@ -4,16 +4,11 @@ on:
     branches:
       - "main"
     tags: ["*"]
-env:
-  ROOT_DOMAIN: strn.pl
 jobs:
   cicd:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          # https://github.com/filecoin-saturn-team token to allow force pushing to protected branches
-          token: ${{ secrets.FORCE_PUSH_TOKEN }}
 
       - uses: actions/setup-node@v2
         with:
@@ -25,33 +20,13 @@ jobs:
       - name: Run Tests
         run: npm run test
 
+      # Just checking if build succeeds.
       - name: Build
         env:
-          STATIC_ORIGIN: https://saturn.tech
-          L1_ORIGIN: https://l1s.saturn.ms
-          TRUSTED_L1_ORIGIN: https://saturn.ms
-          UNTRUSTED_L1_ORIGIN: https://l1s.saturn.ms
-          LOG_INGESTOR_URL: https://twb3qukm2i654i3tnvx36char40aymqq.lambda-url.us-west-2.on.aws
+          STATIC_FILE_ORIGIN: https://saturn-test.network
+          L1_ORIGIN: https://l1s.saturn-test.ms
+          TRUSTED_L1_ORIGIN: https://saturn-test.ms
+          LOG_INGESTOR_URL: https://p6wofrb2zgwrf26mcxjpprivie0lshfx.lambda-url.us-west-2.on.aws
+          JWT_AUTH_URL: https://fz3dyeyxmebszwhuiky7vggmsu0rlkoy.lambda-url.us-west-2.on.aws/
+          ORCHESTRATOR_URL: https://orchestrator.strn-test.pl/nodes?maxNodes=100
         run: npm run build
-
-      - uses: EndBug/add-and-commit@v9
-        if: github.ref_type == 'tag'
-        with:
-          add: "dist"
-          default_author: user_info
-          message: "[skip ci] CI Build"
-          push: origin HEAD:main --force
-
-      - name: Trigger ./dist/* file replication in filecoin-saturn/homepage repo
-        if: github.ref_type == 'tag'
-        run: |
-          code="$(curl -L \
-          -X POST \
-          -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer ${{secrets.ACCESS_TOKEN}}" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repos/filecoin-saturn/homepage/actions/workflows/copy-retrieval-client-files.yml/dispatches \
-          -d '{"ref": "main"}' \
-          -sw "%{http_code}\n")"
-
-          test "$code" -eq 204 || exit 1

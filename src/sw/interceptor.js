@@ -28,7 +28,6 @@ export class Interceptor {
     }
 
     async fetch() {
-        const contentItr = await this.saturn.fetchContent(this.cidPath)
         const self = this
 
         const readableStream = new ReadableStream({
