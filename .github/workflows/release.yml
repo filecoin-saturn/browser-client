@@ -30,3 +30,36 @@ jobs:
           JWT_AUTH_URL: https://fz3dyeyxmebszwhuiky7vggmsu0rlkoy.lambda-url.us-west-2.on.aws/
           ORCHESTRATOR_URL: https://orchestrator.strn-test.pl/nodes?maxNodes=100
         run: npm run build
+
+      - name: Set Staging Environment Variables
+        if: github.ref_type != 'tag'
+        run: |
+          echo "FLEEK_SITE_SLUG=saturn-staging" >> $GITHUB_ENV
+
+      - name: Set Production Environment Variables
+        if: github.ref_type == 'tag'
+        run: |
+          echo "FLEEK_SITE_SLUG=saturn-tech" >> $GITHUB_ENV
+
+        # Trigger fleek homepage deploy, which will build and host the browser-client files.
+      - name: Deploy
+        run: |
+          siteJson=$(
+          curl -sS https://api.fleek.co/graphql -H "Authorization: ${{secrets.FLEEK_HOSTING_API_KEY}}" \
+          -H "Content-Type: application/json" \
+          -d '{ "query": "query { getSiteBySlug(slug: \"'"$FLEEK_SITE_SLUG"'\") { id publishedDeploy { id } }}" }'
+          )
+
+          siteId=$(echo $siteJson | jq --raw-output '.data.getSiteBySlug.id')
+          latestDeployId=$(echo $siteJson | jq --raw-output '.data.getSiteBySlug.publishedDeploy.id')
+
+          echo "siteSlug=$FLEEK_SITE_SLUG"
+          echo "siteId=$siteId"
+          echo "latestDeployId=$latestDeployId"
+
+          # Retry deploy will cause fleek to download the latest browser-client, while also
+          # keeping the currently deployed homepage version.
+          curl -sS -H "Authorization: ${{secrets.FLEEK_HOSTING_API_KEY}}" \
+          -H "Content-Type: application/json" \
+          -d '{ "query": "mutation { retryDeploy(siteId: \"'"$siteId"'\", deployId: \"'"$latestDeployId"'\") { id status } }" }' \
+          https://api.fleek.co/graphql | jq
