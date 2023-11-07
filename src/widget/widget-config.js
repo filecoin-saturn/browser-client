@@ -4,6 +4,7 @@
 export const WIDGET_BASE_URL = `${process.env.STATIC_FILE_ORIGIN}/widget.js`
 
 const CLIENT_KEY_IDENTIFIER = 'integration'
+const INSTALL_PATH_KEY = 'installPath'
 
 export function isWidgetUrl (url) {
     const { href } = new URL(url)
@@ -14,6 +15,7 @@ function getConf (urlObj, conf = {}) {
     const [_, queryStr] = urlObj.href.split(/#|[?]/)
     const searchParams = new URLSearchParams(queryStr)
     conf.clientKey = searchParams.get(CLIENT_KEY_IDENTIFIER)
+    conf.installPath = searchParams.get(INSTALL_PATH_KEY) ?? '/'
     return conf
 }
 

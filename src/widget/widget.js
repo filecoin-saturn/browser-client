@@ -10,9 +10,12 @@ const MDN_SW_DOCS_URL = 'https://developer.mozilla.org/en-US/docs/Web' +
                         '#Why_is_my_service_worker_failing_to_register'
 
 async function installSw (conf) {
-    const { clientId, clientKey } = conf
+    const { clientId, clientKey, installPath } = conf
     try {
-        const path = `${SW_PATH}?clientId=${clientId}&clientKey=${clientKey}`
+        let path = `${SW_PATH}?clientId=${clientId}&clientKey=${clientKey}`
+        if (installPath !== '/') {
+            path = installPath + path
+        }
         await navigator.serviceWorker.register(path)
     } catch (err) {
         console.warn(
@@ -55,7 +58,8 @@ function initWidget () {
     }
 
     const config = widgetConfigFromScriptTag()
-    const clientKey = config.clientKey
+    config.clientId = getRetrievalClientId()
+
     addHeadElement('link', {
         href: process.env.L1_ORIGIN,
         crossOrigin: '',
@@ -63,9 +67,7 @@ function initWidget () {
         id: 'saturn-preconnect'
     })
 
-    const clientId = getRetrievalClientId()
-    const conf = { clientId, clientKey }
-    installSw(conf)
+    installSw(config)
 }
 
 initWidget()
