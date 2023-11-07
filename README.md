@@ -29,9 +29,9 @@ a requirement when retrieving content in a trustless manner from community hoste
 
 ## Deployment
 
-- To deploy to staging, push to `main`. Then trigger a staging homepage fleek deploy.
+- To deploy to staging, push to `main`.
 
-- To deploy to production, push a tag. Then trigger a prod homepage fleek deploy.
+- To deploy to production, push a tag.
 
 ```bash
 git tag -m deploy $(date +%s)
