@@ -29,6 +29,7 @@ export class Controller {
             logURL: process.env.LOG_INGESTOR_URL,
             orchURL: process.env.ORCHESTRATOR_URL,
             authURL: process.env.JWT_AUTH_URL,
+            experimental: true,
             clientKey: getClientKey(),
             storage: indexedDbStorage()
         })
