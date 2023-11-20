@@ -12,11 +12,14 @@ const MDN_SW_DOCS_URL = 'https://developer.mozilla.org/en-US/docs/Web' +
 async function installSw (conf) {
     const { clientId, clientKey, installPath } = conf
     try {
-        let path = `${SW_PATH}?clientId=${clientId}&clientKey=${clientKey}`
+        const url = new URL(window.origin + SW_PATH)
         if (installPath !== '/') {
-            path = installPath + path
+            url.pathname = installPath + url.pathname
         }
-        await navigator.serviceWorker.register(path)
+        if (clientKey) {
+            url.searchParams.set('clientKey', clientKey)
+        }
+        await navigator.serviceWorker.register(url)
     } catch (err) {
         console.warn(
             'Failed to install Saturn\'s Service Worker.\n\n' +
