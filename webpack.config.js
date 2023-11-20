@@ -80,12 +80,5 @@ export default (env, { mode }) => {
                 }
             })
         ],
-        resolve: {
-            alias: {
-                '@src': abspath('src'),
-                '@sw': abspath('src/sw'),
-                '@widget': abspath('src/widget'),
-            }
-        }
     }
 }

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import { SW_PATH } from '@src/constants.js'
+import { SW_PATH } from '#src/constants.js'
 import { widgetConfigFromScriptTag } from './widget-config.js'
 
 const cl = console.log

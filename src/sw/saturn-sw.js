@@ -8,7 +8,7 @@ import {
     SW_CORE_PATH,
     SHARED_WORKER_PATH,
     DEDICATED_WORKER_PATH
-} from '@src/constants'
+} from '#src/constants.js'
 
 const origin = process.env.STATIC_FILE_ORIGIN
 
