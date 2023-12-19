@@ -34,9 +34,14 @@ export class Interceptor {
             async start(controller) {
                 try {
                     const opts = {
-                        customerFallbackURL: self.event.request.url
+                        customerFallbackURL: self.event.request.url,
+                        raceNodes: true,
+                        firstHitDNS: true
                     }
-                    const contentItr = await self.saturn.fetchContentWithFallback(self.cidPath, opts)
+                    const contentItr = await self.saturn.fetchContentWithFallback(
+                        self.cidPath,
+                        opts
+                    )
                     await self._streamContent(contentItr, controller)
                 } catch (err) {
                     self._debug('Error', err)
