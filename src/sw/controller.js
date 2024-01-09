@@ -107,16 +107,6 @@ function meetsInterceptionPreconditions (event) {
             return false
         }
 
-        // range requests not supported yet.
-        const isStreamingMedia = ['video', 'audio'].includes(destination)
-        // HLS works fine, no range requests involved.
-        const isHLS = url.includes('.m3u8')
-
-        // TODO: Add check for range header, skip if present
-        if (isStreamingMedia && !isHLS) {
-            return false
-        }
-
         // https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
         // "If a request is made to another origin with this mode set, the
         // result is simply an error."

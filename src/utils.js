@@ -80,3 +80,43 @@ export function getCidPathFromURL(url, cid) {
 
     return cidPath
 }
+
+export function parseRange(rangeHeader) {
+  if (typeof rangeHeader !== 'string') {
+    return 
+  }
+
+  const index = rangeHeader.indexOf('=')
+
+  if (index === -1) {
+    return 
+  }
+
+  // split the range string
+  const arr = rangeHeader.slice(index + 1).split(',')
+  // TODO: support multi-range requests
+  if (arr.length !== 1) {
+    return 
+  }
+  const type = rangeHeader.slice(0, index)
+  if (type !== 'bytes') {
+    return 
+  }
+
+  const range = arr[0].split('-')
+  const rangeStart = parseInt(range[0], 10)
+  const rangeEnd = parseInt(range[1], 10)
+ 
+  // -nnn
+  if (isNaN(rangeStart)) {
+      if (isNaN(rangeEnd)) {
+        return 
+      }
+      return { rangeStart: -rangeEnd }
+  // nnn-
+  } else if (isNaN(rangeEnd)) {
+    return { rangeStart }
+  }
+
+  return { rangeStart, rangeEnd }
+}

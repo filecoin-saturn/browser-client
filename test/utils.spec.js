@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { findCIDInURL, getCidPathFromURL } from '#src/utils.js'
+import { findCIDInURL, getCidPathFromURL, parseRange } from '#src/utils.js'
 
 describe('controller', () => {
     it('should find cid in the subdomain', () => {
@@ -37,5 +37,25 @@ describe('controller', () => {
 
         const foundCidPath = getCidPathFromURL(url, cid)
         assert.strictEqual(foundCidPath, cidPath)
+    })
+
+    it('should parse ranges', () => {
+        assert.strictEqual(parseRange(undefined), undefined)
+        assert.strictEqual(parseRange(null), undefined)
+        assert.strictEqual(parseRange(''), undefined)
+        assert.strictEqual(parseRange('apples=0-1000'), undefined)
+        assert.strictEqual(parseRange('bytes=0-1000,2000-3000'), undefined)
+        assert.strictEqual(parseRange('bytes=cheese-crackers'), undefined)
+        assert.strictEqual(parseRange('bytes=cheese'), undefined)
+        assert.deepEqual(parseRange('bytes=0-1000'), {
+            rangeStart: 0,
+            rangeEnd: 1000
+        })
+        assert.deepEqual(parseRange('bytes=1000'), {
+            rangeStart: 1000
+        })
+        assert.deepEqual(parseRange('bytes=-1000'), {
+            rangeStart: -1000
+        })
     })
 })
