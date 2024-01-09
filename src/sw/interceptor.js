@@ -2,7 +2,7 @@ import toIterable from 'browser-readablestream-to-it'
 import createDebug from 'debug'
 import * as Sentry from '@sentry/browser'
 
-import { getCidPathFromURL } from '../utils.js'
+import { getCidPathFromURL, parseRange } from '../utils.js'
 
 const debug = createDebug('sw')
 const cl = console.log
@@ -14,6 +14,7 @@ export class Interceptor {
     constructor(cid, saturn, clientId, event) {
         this.cid = cid
         this.cidPath = getCidPathFromURL(event.request.url, cid)
+        this.range = parseRange(event.request.headers.get('Range'))
         this.saturn = saturn
         this.clientId = clientId
         this.event = event
@@ -36,7 +37,8 @@ export class Interceptor {
                     const opts = {
                         customerFallbackURL: self.event.request.url,
                         raceNodes: true,
-                        firstHitDNS: true
+                        firstHitDNS: true,
+                        range: self.range
                     }
                     const contentItr = await self.saturn.fetchContentWithFallback(
                         self.cidPath,
