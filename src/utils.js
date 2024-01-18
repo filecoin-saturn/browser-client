@@ -52,31 +52,65 @@ export class Deferred {
 }
 
 // Modified from https://github.com/PinataCloud/ipfs-gateway-tools/blob/34533f3d5f3c0dd616327e2e5443072c27ea569d/src/index.js#L6
-export function findCIDInURL (url) {
-    const splitUrl = url.split('?')[0].split('/')
-    for (const split of splitUrl) {
-        if (isIPFS.cid(split)) {
-            return split
-        }
-        const splitOnDot = split.split('.')[0]
-        if(isIPFS.cid(splitOnDot)) {
-            return splitOnDot
+export function findCIDPathInURL(url) {
+    let urlObj
+    try {
+        urlObj = new URL(url)
+    } catch (err) {
+        return null
+    }
+
+    let cid = ''
+    let path = ''
+
+    const { hostname, pathname, searchParams, href } = urlObj
+
+    const searchStrings = [
+        hostname + pathname,
+        ...searchParams.values()
+    ]
+
+    for (const str of searchStrings) {
+        const result = findCIDPathInUrlComponent(str)
+
+        // sanity check if parsed cid appears in URL
+        if (result.cid && href.includes(result.cid)) {
+            ({ cid, path } = result)
+            break
         }
     }
 
-    return null
-}
-
-export function getCidPathFromURL(url, cid) {
-    const { hostname, pathname } = new URL(url)
-    let cidPath
-
-    if (pathname.startsWith('/ipfs/')) {
-        cidPath = pathname.replace('/ipfs/', '')
-    } else if (hostname.includes(cid)) {
-        // https://<cid>.ipfs.dweb.link/cat.png -> https://saturn.ms/ipfs/<cid>/cat.png
-        cidPath = cid + pathname
-    }
+    const cidPath = path ? `${cid}/${path}` : cid
 
     return cidPath
+}
+
+function findCIDPathInUrlComponent(str) {
+    let cid = ''
+    let path = ''
+
+    const splitStr = str.split('/')
+    const isMaybeHost = splitStr[0].includes('.')
+
+    const segmentsToPath = i => splitStr.slice(i).join('/') ?? ''
+
+    for (let i = 0; i < splitStr.length; i++) {
+        const segment = splitStr[i]
+        if (isIPFS.cid(segment)) {
+            cid = segment
+            path = segmentsToPath(i + 1)
+            break
+        }
+
+        const splitOnDot = segment.split('.')[0]
+        if(isIPFS.cid(splitOnDot)) {
+            cid = splitOnDot
+            if (isMaybeHost) {
+                path = segmentsToPath(1)
+            }
+            break
+        }
+    }
+
+    return { cid, path }
 }
