@@ -19,14 +19,6 @@ describe('controller', () => {
         assert.strictEqual(findCIDPathInURL(url), cidPath)
     })
 
-    it('finds the subdomain cid in an encoded query param', () => {
-        const cid = 'bafybeidrf56yzbkocajbloyafrebrdzsam3uj35sce2fdyo4elb6zzoily'
-        const param = `${cid}.ipfs.dweb.link`
-        const url = `https://proxy.com/?url=${param}`
-
-        assert.strictEqual(findCIDPathInURL(url), cid)
-    })
-
     it('finds the cid in the url path', () => {
         const cid = 'QmS29VtmK7Ax6TMmMwbwqtuKSGRJTLJAmHMW83qGvBBxhV'
         const url = `https://ipfs.io/ipfs/${cid}`
@@ -55,6 +47,14 @@ describe('controller', () => {
         assert.strictEqual(findCIDPathInURL(url), cidPath)
     })
 
+    it('finds the subdomain cid in an encoded query param', () => {
+        const cid = 'bafybeidrf56yzbkocajbloyafrebrdzsam3uj35sce2fdyo4elb6zzoily'
+        const param = `${cid}.ipfs.dweb.link`
+        const url = `https://proxy.com/?url=${param}`
+
+        assert.strictEqual(findCIDPathInURL(url), cid)
+    })
+
     it('finds the subdomain cidPath in an encoded query param', () => {
         const cid = 'bafybeidrf56yzbkocajbloyafrebrdzsam3uj35sce2fdyo4elb6zzoily'
         const path = 'dog/cow/cat.png'
@@ -77,5 +77,11 @@ describe('controller', () => {
         const url = `https://proxy.com/?cid=${cidPath}`
 
         assert.strictEqual(findCIDPathInURL(url), cidPath)
+    })
+
+    it('returns empty string if cid not found', () => {
+        const url = 'https://example.com/hello/world.png'
+
+        assert.strictEqual(findCIDPathInURL(url), '')
     })
 })
