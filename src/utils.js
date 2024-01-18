@@ -92,7 +92,7 @@ function findCIDPathInUrlComponent(str) {
     const splitStr = str.split('/')
     const isMaybeHost = splitStr[0].includes('.')
 
-    const segmentsToPath = i => splitStr.slice(i).join('/') ?? ''
+    const segmentsToPath = i => splitStr.slice(i).join('/') || ''
 
     for (let i = 0; i < splitStr.length; i++) {
         const segment = splitStr[i]
