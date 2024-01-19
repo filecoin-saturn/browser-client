@@ -2,8 +2,6 @@ import toIterable from 'browser-readablestream-to-it'
 import createDebug from 'debug'
 import * as Sentry from '@sentry/browser'
 
-import { getCidPathFromURL } from '../utils.js'
-
 const debug = createDebug('sw')
 const cl = console.log
 
@@ -11,9 +9,8 @@ export class Interceptor {
     static nocache = false // request/response skips L1 cache entirely
     static bypasscache = false // request skips L1 cache, response gets cached.
 
-    constructor(cid, saturn, clientId, event) {
-        this.cid = cid
-        this.cidPath = getCidPathFromURL(event.request.url, cid)
+    constructor(cidPath, saturn, clientId, event) {
+        this.cidPath = cidPath
         this.saturn = saturn
         this.clientId = clientId
         this.event = event

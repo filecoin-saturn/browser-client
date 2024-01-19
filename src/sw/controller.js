@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import * as Sentry from '@sentry/browser'
 
 import { Interceptor } from './interceptor.js'
-import { findCIDInURL } from '../utils.js'
+import { findCIDPathInURL } from '../utils.js'
 
 const FILTERED_HOSTS = [
     'images.studio.metaplex.com',
@@ -48,11 +48,11 @@ export class Controller {
             }
 
             const { url } = event.request
-            const cid = findCIDInURL(url)
+            const cidPath = findCIDPathInURL(url)
 
-            if (cid) {
-                debug('cid', cid, url)
-                event.respondWith(fetchCID(cid, this.saturn, this.clientId, event))
+            if (cidPath) {
+                debug('cidPath', cidPath, url)
+                event.respondWith(fetchCID(cidPath, this.saturn, this.clientId, event))
             }
         })
     }
@@ -76,12 +76,12 @@ function getClientKey() {
     return clientKey
 }
 
-async function fetchCID (cid, saturn, clientId, event) {
+async function fetchCID(cidPath, saturn, clientId, event) {
     let response = null
     const { request } = event
 
     try {
-        const interceptor = new Interceptor(cid, saturn, clientId, event)
+        const interceptor = new Interceptor(cidPath, saturn, clientId, event)
         response = await interceptor.fetch()
     } catch (err) {
         debug(`${request.url}: fetchCID err %O`, err)
