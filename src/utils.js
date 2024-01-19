@@ -66,8 +66,8 @@ export function findCIDPathInURL(url) {
     const { hostname, pathname, searchParams, href } = urlObj
 
     const searchStrings = [
-        hostname + pathname,
-        ...searchParams.values()
+        hostname + pathname, // checks for path based or subdomain based cids.
+        ...searchParams.values(), // params could contain cid URLs, e.g. ?url=ipfs.io/ipfs/<cid>
     ]
 
     for (const str of searchStrings) {
@@ -89,9 +89,10 @@ function findCIDPathInUrlComponent(str) {
     let cid = null
     let path = null
 
-    const splitStr = str.split('/')
+    // Heuristic to check if the first segment is a domain.
     const isMaybeHost = splitStr[0].includes('.')
 
+    // Assumes the rest of the segments after the cid form the file path.
     const segmentsToPath = i => splitStr.slice(i).join('/') || null
 
     for (let i = 0; i < splitStr.length; i++) {
