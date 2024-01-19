@@ -59,7 +59,7 @@ describe('controller', () => {
         const cid = 'bafybeidrf56yzbkocajbloyafrebrdzsam3uj35sce2fdyo4elb6zzoily'
         const path = 'dog/cow/cat.png'
         const cidPath = `${cid}/${path}`
-        const param = `${cid}.ipfs.dweb.link/${path}`
+        const param = `https%3A%2F%2F${cid}.ipfs.dweb.link/${path}`
         const url = `https://proxy.com/?url=${param}`
 
         assert.strictEqual(findCIDPathInURL(url), cidPath)
