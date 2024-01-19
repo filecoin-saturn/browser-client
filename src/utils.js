@@ -60,8 +60,8 @@ export function findCIDPathInURL(url) {
         return null
     }
 
-    let cid = ''
-    let path = ''
+    let cid = null
+    let path = null
 
     const { hostname, pathname, searchParams, href } = urlObj
 
@@ -86,13 +86,13 @@ export function findCIDPathInURL(url) {
 }
 
 function findCIDPathInUrlComponent(str) {
-    let cid = ''
-    let path = ''
+    let cid = null
+    let path = null
 
     const splitStr = str.split('/')
     const isMaybeHost = splitStr[0].includes('.')
 
-    const segmentsToPath = i => splitStr.slice(i).join('/') || ''
+    const segmentsToPath = i => splitStr.slice(i).join('/') || null
 
     for (let i = 0; i < splitStr.length; i++) {
         const segment = splitStr[i]

@@ -79,9 +79,9 @@ describe('controller', () => {
         assert.strictEqual(findCIDPathInURL(url), cidPath)
     })
 
-    it('returns empty string if cid not found', () => {
+    it('returns null if cid not found', () => {
         const url = 'https://example.com/hello/world.png'
 
-        assert.strictEqual(findCIDPathInURL(url), '')
+        assert.strictEqual(findCIDPathInURL(url), null)
     })
 })
